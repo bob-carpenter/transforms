@@ -1,393 +1,0 @@
-(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
-  0%|          | 0/1 [00:00<?, ?it/s]11:29:43 - cmdstanpy - INFO - CmdStan start processing
-11:30:08 - cmdstanpy - INFO - CmdStan done processing
-method = sample (Default)
-sample
-num_samples = 1000 (Default)
-num_warmup = 1000 (Default)
-save_warmup = 0 (Default)
-thin = 1 (Default)
-adapt
-engaged = 1 (Default)
-gamma = 0.050000000000000003 (Default)
-delta = 0.80000000000000004 (Default)
-kappa = 0.75 (Default)
-t0 = 10 (Default)
-init_buffer = 75 (Default)
-term_buffer = 50 (Default)
-window = 25 (Default)
-algorithm = hmc (Default)
-hmc
-engine = nuts (Default)
-nuts
-max_depth = 10 (Default)
-metric = diag_e (Default)
-metric_file =  (Default)
-stepsize = 1 (Default)
-stepsize_jitter = 0 (Default)
-num_chains = 4
-id = 1 (Default)
-data
-file = /tmp/tmpv4vkq075/y9njqiey.json
-init = 0.1
-random
-seed = 32186
-output
-file = /tmp/tmpv4vkq075/HypersphericalAngular_DirichletSymmetrich9owgfvk/HypersphericalAngular_DirichletSymmetric-20221211112943.csv
-diagnostic_file =  (Default)
-refresh = 100 (Default)
-sig_figs = -1 (Default)
-profile_file = profile.csv (Default)
-num_threads = 4 (Default)
-
-
-Gradient evaluation took 0.00144 seconds
-1000 transitions using 10 leapfrog steps per transition would take 14.4 seconds.
-Adjust your expectations accordingly!
-
-
-
-Gradient evaluation took 0.000805 seconds
-1000 transitions using 10 leapfrog steps per transition would take 8.05 seconds.
-Adjust your expectations accordingly!
-
-
-
-Gradient evaluation took 0.000798 seconds
-1000 transitions using 10 leapfrog steps per transition would take 7.98 seconds.
-Adjust your expectations accordingly!
-
-
-
-Gradient evaluation took 0.000812 seconds
-1000 transitions using 10 leapfrog steps per transition would take 8.12 seconds.
-Adjust your expectations accordingly!
-
-
-Chain [1] Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain [3] Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain [4] Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain [2] Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain [4] Iteration:  100 / 2000 [  5%]  (Warmup)
-Chain [2] Iteration:  100 / 2000 [  5%]  (Warmup)
-Chain [1] Iteration:  100 / 2000 [  5%]  (Warmup)
-Chain [3] Iteration:  100 / 2000 [  5%]  (Warmup)
-Chain [3] Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain [4] Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain [2] Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain [1] Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain [3] Iteration:  300 / 2000 [ 15%]  (Warmup)
-Chain [4] Iteration:  300 / 2000 [ 15%]  (Warmup)
-Chain [2] Iteration:  300 / 2000 [ 15%]  (Warmup)
-Chain [1] Iteration:  300 / 2000 [ 15%]  (Warmup)
-Chain [3] Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain [4] Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain [2] Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain [1] Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain [4] Iteration:  500 / 2000 [ 25%]  (Warmup)
-Chain [3] Iteration:  500 / 2000 [ 25%]  (Warmup)
-Chain [2] Iteration:  500 / 2000 [ 25%]  (Warmup)
-Chain [1] Iteration:  500 / 2000 [ 25%]  (Warmup)
-Chain [4] Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain [3] Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain [2] Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain [1] Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain [4] Iteration:  700 / 2000 [ 35%]  (Warmup)
-Chain [3] Iteration:  700 / 2000 [ 35%]  (Warmup)
-Chain [2] Iteration:  700 / 2000 [ 35%]  (Warmup)
-Chain [1] Iteration:  700 / 2000 [ 35%]  (Warmup)
-Chain [4] Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain [3] Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain [2] Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain [1] Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain [4] Iteration:  900 / 2000 [ 45%]  (Warmup)
-Chain [2] Iteration:  900 / 2000 [ 45%]  (Warmup)
-Chain [3] Iteration:  900 / 2000 [ 45%]  (Warmup)
-Chain [1] Iteration:  900 / 2000 [ 45%]  (Warmup)
-Chain [4] Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain [3] Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain [3] Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain [4] Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain [2] Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain [2] Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain [1] Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain [1] Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain [3] Iteration: 1100 / 2000 [ 55%]  (Sampling)
-Chain [4] Iteration: 1100 / 2000 [ 55%]  (Sampling)
-Chain [2] Iteration: 1100 / 2000 [ 55%]  (Sampling)
-Chain [1] Iteration: 1100 / 2000 [ 55%]  (Sampling)
-Chain [3] Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain [4] Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain [2] Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain [1] Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain [3] Iteration: 1300 / 2000 [ 65%]  (Sampling)
-Chain [4] Iteration: 1300 / 2000 [ 65%]  (Sampling)
-Chain [2] Iteration: 1300 / 2000 [ 65%]  (Sampling)
-Chain [1] Iteration: 1300 / 2000 [ 65%]  (Sampling)
-Chain [3] Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain [4] Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain [2] Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain [1] Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain [3] Iteration: 1500 / 2000 [ 75%]  (Sampling)
-Chain [4] Iteration: 1500 / 2000 [ 75%]  (Sampling)
-Chain [2] Iteration: 1500 / 2000 [ 75%]  (Sampling)
-Chain [1] Iteration: 1500 / 2000 [ 75%]  (Sampling)
-Chain [4] Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain [3] Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain [2] Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain [1] Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain [4] Iteration: 1700 / 2000 [ 85%]  (Sampling)
-Chain [3] Iteration: 1700 / 2000 [ 85%]  (Sampling)
-Chain [2] Iteration: 1700 / 2000 [ 85%]  (Sampling)
-Chain [1] Iteration: 1700 / 2000 [ 85%]  (Sampling)
-Chain [4] Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain [3] Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain [2] Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain [1] Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain [4] Iteration: 1900 / 2000 [ 95%]  (Sampling)
-Chain [3] Iteration: 1900 / 2000 [ 95%]  (Sampling)
-Chain [2] Iteration: 1900 / 2000 [ 95%]  (Sampling)
-Chain [1] Iteration: 1900 / 2000 [ 95%]  (Sampling)
-Chain [4] Iteration: 2000 / 2000 [100%]  (Sampling)
-Chain [3] Iteration: 2000 / 2000 [100%]  (Sampling)
-
-Elapsed Time: 11.204 seconds (Warm-up)
-13.719 seconds (Sampling)
-24.923 seconds (Total)
-
-
-Elapsed Time: 11.202 seconds (Warm-up)
-13.722 seconds (Sampling)
-24.924 seconds (Total)
-
-Chain [2] Iteration: 2000 / 2000 [100%]  (Sampling)
-
-Elapsed Time: 11.31 seconds (Warm-up)
-13.726 seconds (Sampling)
-25.036 seconds (Total)
-
-Chain [1] Iteration: 2000 / 2000 [100%]  (Sampling)
-
-Elapsed Time: 11.383 seconds (Warm-up)
-13.718 seconds (Sampling)
-25.101 seconds (Total)
-
-
-
-
-
-
-
-
-  0%|          | 0/99 [00:00<?, ?it/s][A11:30:13 - cmdstanpy - INFO - CmdStan start processing
-11:30:38 - cmdstanpy - INFO - CmdStan done processing
-
-  1%|          | 1/99 [00:29<47:42, 29.20s/it][A11:30:42 - cmdstanpy - INFO - CmdStan start processing
-11:31:07 - cmdstanpy - INFO - CmdStan done processing
-
-  2%|▏         | 2/99 [00:58<47:16, 29.24s/it][A11:31:11 - cmdstanpy - INFO - CmdStan start processing
-11:31:36 - cmdstanpy - INFO - CmdStan done processing
-
-  3%|▎         | 3/99 [01:27<46:51, 29.29s/it][A11:31:40 - cmdstanpy - INFO - CmdStan start processing
-11:32:05 - cmdstanpy - INFO - CmdStan done processing
-
-  4%|▍         | 4/99 [01:56<46:18, 29.25s/it][A11:32:10 - cmdstanpy - INFO - CmdStan start processing
-11:32:37 - cmdstanpy - INFO - CmdStan done processing
-
-  5%|▌         | 5/99 [02:28<47:13, 30.15s/it][A11:32:41 - cmdstanpy - INFO - CmdStan start processing
-11:33:07 - cmdstanpy - INFO - CmdStan done processing
-
-  6%|▌         | 6/99 [02:58<46:32, 30.03s/it][A11:33:11 - cmdstanpy - INFO - CmdStan start processing
-11:33:36 - cmdstanpy - INFO - CmdStan done processing
-
-  7%|▋         | 7/99 [03:27<45:38, 29.76s/it][A11:33:40 - cmdstanpy - INFO - CmdStan start processing
-11:46:17 - cmdstanpy - INFO - CmdStan done processing
-11:46:17 - cmdstanpy - WARNING - Some chains may have failed to converge.
-	Chain 4 had 1000 iterations at max treedepth (100.0%)
-	Use function "diagnose()" to see further information.
-
-  8%|▊         | 8/99 [16:14<6:40:56, 264.36s/it][A11:46:27 - cmdstanpy - INFO - CmdStan start processing
-11:46:52 - cmdstanpy - INFO - CmdStan done processing
-
-  9%|▉         | 9/99 [16:43<4:46:24, 190.93s/it][A11:46:56 - cmdstanpy - INFO - CmdStan start processing
-11:47:22 - cmdstanpy - INFO - CmdStan done processing
-
- 10%|█         | 10/99 [17:13<3:29:20, 141.13s/it][A11:47:26 - cmdstanpy - INFO - CmdStan start processing
-11:47:51 - cmdstanpy - INFO - CmdStan done processing
-
- 11%|█         | 11/99 [17:42<2:36:51, 106.95s/it][A11:47:56 - cmdstanpy - INFO - CmdStan start processing
-11:48:21 - cmdstanpy - INFO - CmdStan done processing
-
- 12%|█▏        | 12/99 [18:12<2:00:55, 83.39s/it] [A11:48:25 - cmdstanpy - INFO - CmdStan start processing
-11:48:50 - cmdstanpy - INFO - CmdStan done processing
-
- 13%|█▎        | 13/99 [18:42<1:36:09, 67.09s/it][A11:48:55 - cmdstanpy - INFO - CmdStan start processing
-11:49:20 - cmdstanpy - INFO - CmdStan done processing
-
- 14%|█▍        | 14/99 [19:11<1:18:54, 55.71s/it][A11:49:24 - cmdstanpy - INFO - CmdStan start processing
-11:49:49 - cmdstanpy - INFO - CmdStan done processing
-
- 15%|█▌        | 15/99 [19:41<1:06:57, 47.82s/it][A11:49:54 - cmdstanpy - INFO - CmdStan start processing
-11:50:19 - cmdstanpy - INFO - CmdStan done processing
-
- 16%|█▌        | 16/99 [20:10<58:43, 42.45s/it]  [A11:50:24 - cmdstanpy - INFO - CmdStan start processing
-11:50:49 - cmdstanpy - INFO - CmdStan done processing
-
- 17%|█▋        | 17/99 [20:40<52:43, 38.58s/it][A11:50:53 - cmdstanpy - INFO - CmdStan start processing
-11:51:18 - cmdstanpy - INFO - CmdStan done processing
-
- 18%|█▊        | 18/99 [21:10<48:24, 35.85s/it][A11:51:23 - cmdstanpy - INFO - CmdStan start processing
-11:51:48 - cmdstanpy - INFO - CmdStan done processing
-
- 19%|█▉        | 19/99 [21:39<45:16, 33.95s/it][A11:51:52 - cmdstanpy - INFO - CmdStan start processing
-11:52:17 - cmdstanpy - INFO - CmdStan done processing
-
- 20%|██        | 20/99 [22:08<42:52, 32.57s/it][A11:52:21 - cmdstanpy - INFO - CmdStan start processing
-11:52:47 - cmdstanpy - INFO - CmdStan done processing
-
- 21%|██        | 21/99 [22:38<41:13, 31.71s/it][A11:52:51 - cmdstanpy - INFO - CmdStan start processing
-11:53:16 - cmdstanpy - INFO - CmdStan done processing
-
- 22%|██▏       | 22/99 [23:08<39:54, 31.10s/it][A11:53:21 - cmdstanpy - INFO - CmdStan start processing
-11:53:46 - cmdstanpy - INFO - CmdStan done processing
-
- 23%|██▎       | 23/99 [23:38<38:54, 30.72s/it][A11:53:51 - cmdstanpy - INFO - CmdStan start processing
-11:54:16 - cmdstanpy - INFO - CmdStan done processing
-
- 24%|██▍       | 24/99 [24:07<38:02, 30.43s/it][A11:54:20 - cmdstanpy - INFO - CmdStan start processing
-11:54:46 - cmdstanpy - INFO - CmdStan done processing
-
- 25%|██▌       | 25/99 [24:37<37:15, 30.20s/it][A11:54:50 - cmdstanpy - INFO - CmdStan start processing
-11:55:15 - cmdstanpy - INFO - CmdStan done processing
-
- 26%|██▋       | 26/99 [25:07<36:34, 30.06s/it][A11:55:20 - cmdstanpy - INFO - CmdStan start processing
-11:55:45 - cmdstanpy - INFO - CmdStan done processing
-
- 27%|██▋       | 27/99 [25:37<35:57, 29.97s/it][A11:55:50 - cmdstanpy - INFO - CmdStan start processing
-11:56:15 - cmdstanpy - INFO - CmdStan done processing
-
- 28%|██▊       | 28/99 [26:07<35:30, 30.01s/it][A11:56:20 - cmdstanpy - INFO - CmdStan start processing
-11:56:45 - cmdstanpy - INFO - CmdStan done processing
-
- 29%|██▉       | 29/99 [26:37<34:59, 29.99s/it][A11:56:50 - cmdstanpy - INFO - CmdStan start processing
-11:57:15 - cmdstanpy - INFO - CmdStan done processing
-
- 30%|███       | 30/99 [27:07<34:28, 29.97s/it][A11:57:20 - cmdstanpy - INFO - CmdStan start processing
-11:57:45 - cmdstanpy - INFO - CmdStan done processing
-
- 31%|███▏      | 31/99 [27:37<33:58, 29.98s/it][A11:57:50 - cmdstanpy - INFO - CmdStan start processing
-11:58:15 - cmdstanpy - INFO - CmdStan done processing
-
- 32%|███▏      | 32/99 [28:06<33:26, 29.95s/it][A11:58:19 - cmdstanpy - INFO - CmdStan start processing
-11:58:45 - cmdstanpy - INFO - CmdStan done processing
-
- 33%|███▎      | 33/99 [28:36<32:57, 29.97s/it][A11:58:49 - cmdstanpy - INFO - CmdStan start processing
-11:59:14 - cmdstanpy - INFO - CmdStan done processing
-
- 34%|███▍      | 34/99 [29:06<32:26, 29.94s/it][A11:59:19 - cmdstanpy - INFO - CmdStan start processing
-11:59:45 - cmdstanpy - INFO - CmdStan done processing
-
- 35%|███▌      | 35/99 [29:36<31:58, 29.98s/it][A11:59:49 - cmdstanpy - INFO - CmdStan start processing
-12:00:15 - cmdstanpy - INFO - CmdStan done processing
-
- 36%|███▋      | 36/99 [30:07<31:34, 30.08s/it][A12:00:20 - cmdstanpy - INFO - CmdStan start processing
-12:00:47 - cmdstanpy - INFO - CmdStan done processing
-
- 37%|███▋      | 37/99 [30:39<31:48, 30.78s/it][A12:00:52 - cmdstanpy - INFO - CmdStan start processing
-12:01:17 - cmdstanpy - INFO - CmdStan done processing
-
- 38%|███▊      | 38/99 [31:09<31:06, 30.60s/it][A12:01:22 - cmdstanpy - INFO - CmdStan start processing
-12:01:47 - cmdstanpy - INFO - CmdStan done processing
-
- 39%|███▉      | 39/99 [31:39<30:25, 30.43s/it][A12:01:52 - cmdstanpy - INFO - CmdStan start processing
-12:02:18 - cmdstanpy - INFO - CmdStan done processing
-
- 40%|████      | 40/99 [32:10<29:52, 30.37s/it][A12:02:23 - cmdstanpy - INFO - CmdStan start processing
-12:02:48 - cmdstanpy - INFO - CmdStan done processing
-
- 41%|████▏     | 41/99 [32:40<29:17, 30.30s/it][A12:02:53 - cmdstanpy - INFO - CmdStan start processing
-12:03:18 - cmdstanpy - INFO - CmdStan done processing
-
- 42%|████▏     | 42/99 [33:10<28:47, 30.31s/it][A12:03:23 - cmdstanpy - INFO - CmdStan start processing
-12:03:48 - cmdstanpy - INFO - CmdStan done processing
-
- 43%|████▎     | 43/99 [33:40<28:19, 30.35s/it][A12:03:54 - cmdstanpy - INFO - CmdStan start processing
-12:04:19 - cmdstanpy - INFO - CmdStan done processing
-
- 44%|████▍     | 44/99 [34:11<27:51, 30.40s/it][A12:04:24 - cmdstanpy - INFO - CmdStan start processing
-12:04:49 - cmdstanpy - INFO - CmdStan done processing
-
- 45%|████▌     | 45/99 [34:41<27:22, 30.42s/it][A12:04:55 - cmdstanpy - INFO - CmdStan start processing
-12:05:20 - cmdstanpy - INFO - CmdStan done processing
-
- 46%|████▋     | 46/99 [35:12<26:49, 30.37s/it][A12:05:25 - cmdstanpy - INFO - CmdStan start processing
-12:05:50 - cmdstanpy - INFO - CmdStan done processing
-
- 47%|████▋     | 47/99 [35:42<26:15, 30.30s/it][A12:05:55 - cmdstanpy - INFO - CmdStan start processing
-12:06:20 - cmdstanpy - INFO - CmdStan done processing
-
- 48%|████▊     | 48/99 [36:12<25:44, 30.28s/it][A12:06:25 - cmdstanpy - INFO - CmdStan start processing
-12:06:52 - cmdstanpy - INFO - CmdStan done processing
-
- 49%|████▉     | 49/99 [36:44<25:36, 30.73s/it][A12:06:57 - cmdstanpy - INFO - CmdStan start processing
-12:07:22 - cmdstanpy - INFO - CmdStan done processing
-
- 51%|█████     | 50/99 [37:14<25:01, 30.64s/it][A12:07:27 - cmdstanpy - INFO - CmdStan start processing
-12:07:52 - cmdstanpy - INFO - CmdStan done processing
-
- 52%|█████▏    | 51/99 [37:44<24:23, 30.49s/it][A12:07:58 - cmdstanpy - INFO - CmdStan start processing
-12:08:23 - cmdstanpy - INFO - CmdStan done processing
-
- 53%|█████▎    | 52/99 [38:15<23:54, 30.52s/it][A12:08:28 - cmdstanpy - INFO - CmdStan start processing
-12:08:53 - cmdstanpy - INFO - CmdStan done processing
-
- 54%|█████▎    | 53/99 [38:46<23:23, 30.52s/it][A12:08:59 - cmdstanpy - INFO - CmdStan start processing
-12:09:24 - cmdstanpy - INFO - CmdStan done processing
-
- 55%|█████▍    | 54/99 [39:16<22:51, 30.48s/it][A12:09:29 - cmdstanpy - INFO - CmdStan start processing
-12:09:56 - cmdstanpy - INFO - CmdStan done processing
-
- 56%|█████▌    | 55/99 [39:48<22:41, 30.94s/it][A12:10:01 - cmdstanpy - INFO - CmdStan start processing
-12:10:26 - cmdstanpy - INFO - CmdStan done processing
-
- 57%|█████▋    | 56/99 [40:19<22:08, 30.89s/it][A12:10:32 - cmdstanpy - INFO - CmdStan start processing
-12:10:57 - cmdstanpy - INFO - CmdStan done processing
-
- 58%|█████▊    | 57/99 [40:49<21:34, 30.82s/it][A12:11:02 - cmdstanpy - INFO - CmdStan start processing
-12:11:27 - cmdstanpy - INFO - CmdStan done processing
-
- 59%|█████▊    | 58/99 [41:20<20:59, 30.73s/it][A12:11:33 - cmdstanpy - INFO - CmdStan start processing
-12:11:58 - cmdstanpy - INFO - CmdStan done processing
-
- 60%|█████▉    | 59/99 [41:50<20:27, 30.69s/it][A12:12:04 - cmdstanpy - INFO - CmdStan start processing
-12:12:31 - cmdstanpy - INFO - CmdStan done processing
-
- 61%|██████    | 60/99 [42:23<20:22, 31.35s/it][A12:12:36 - cmdstanpy - INFO - CmdStan start processing
-12:13:02 - cmdstanpy - INFO - CmdStan done processing
-
- 62%|██████▏   | 61/99 [42:54<19:44, 31.16s/it][A12:13:07 - cmdstanpy - INFO - CmdStan start processing
-12:13:32 - cmdstanpy - INFO - CmdStan done processing
-
- 63%|██████▎   | 62/99 [43:25<19:06, 30.98s/it][A12:13:38 - cmdstanpy - INFO - CmdStan start processing
-12:14:03 - cmdstanpy - INFO - CmdStan done processing
-
- 64%|██████▎   | 63/99 [43:55<18:32, 30.89s/it][A12:14:08 - cmdstanpy - INFO - CmdStan start processing
-12:14:34 - cmdstanpy - INFO - CmdStan done processing
-
- 65%|██████▍   | 64/99 [44:26<18:02, 30.92s/it][A12:14:39 - cmdstanpy - INFO - CmdStan start processing
-12:15:04 - cmdstanpy - INFO - CmdStan done processing
-
- 66%|██████▌   | 65/99 [44:57<17:29, 30.86s/it][A12:15:10 - cmdstanpy - INFO - CmdStan start processing
-12:15:35 - cmdstanpy - INFO - CmdStan done processing
-
- 67%|██████▋   | 66/99 [45:28<16:55, 30.77s/it][A12:15:41 - cmdstanpy - INFO - CmdStan start processing
-12:16:06 - cmdstanpy - INFO - CmdStan done processing
-
- 68%|██████▊   | 67/99 [45:58<16:25, 30.80s/it][A12:16:12 - cmdstanpy - INFO - CmdStan start processing
-12:29:03 - cmdstanpy - INFO - CmdStan done processing
-12:29:04 - cmdstanpy - WARNING - Some chains may have failed to converge.
-	Chain 4 had 1000 iterations at max treedepth (100.0%)
-	Use function "diagnose()" to see further information.
-
- 69%|██████▊   | 68/99 [59:02<2:12:32, 256.55s/it][A12:29:15 - cmdstanpy - INFO - CmdStan start processing
-slurmstepd: error: *** JOB 948173 ON pcn-1-66 CANCELLED AT 2022-12-11T12:29:31 ***

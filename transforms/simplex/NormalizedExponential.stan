@@ -27,6 +27,6 @@ transformed parameters {
   }
 }
 model {
-  target += log_det_jacobian; 
+  target += log_det_jacobian;
   target += target_density_lp(x, alpha);
 }

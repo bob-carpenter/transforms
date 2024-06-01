@@ -29,4 +29,3 @@ transformed parameters {
 model {
   target += target_density_lp(x, alpha);
 }
-

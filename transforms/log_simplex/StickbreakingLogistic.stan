@@ -8,7 +8,7 @@ functions {
       log_z = log_inv_logit(y[i] - log(N - i)); // logistic_lcdf(y[i] | log(N - i), 1)
       log_x[i] = log_cum_prod + log_z;
       log_cum_prod += log1m_exp(log_z);
-    }   
+    }
     log_x[N] = log_cum_prod;
     target += log_cum_prod;
     return log_x;

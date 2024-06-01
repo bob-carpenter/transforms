@@ -10,7 +10,7 @@ functions {
       x[i] = exp(log_xi);
       log_cum_prod += log1m_exp(log_zi);
       target += log_xi;
-    }   
+    }
     x[N] = exp(log_cum_prod);
     target += log_cum_prod;
     return x;
@@ -29,4 +29,3 @@ transformed parameters {
 model {
   target += target_density_lp(x, alpha);
 }
-

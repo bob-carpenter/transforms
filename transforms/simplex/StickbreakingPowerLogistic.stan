@@ -25,7 +25,7 @@ parameters {
   vector[N - 1] y;
 }
 transformed parameters {
-  simplex[N] x = stickbreaking_power_simplex_logistic_constrain_lp(y);
+  simplex[N] x = stickbreaking_power_logistic_simplex_constrain_lp(y);
 }
 model {
   target += target_density_lp(x, alpha);

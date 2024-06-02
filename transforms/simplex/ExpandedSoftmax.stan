@@ -11,6 +11,6 @@ transformed parameters {
 }
 model {
  target += sum(y) - N * logr;  // target += log(prod(x))
- target += std_normal_lupdf(logr - log(N));
+ target += std_normal_lpdf(logr - log(N));
  target += target_density_lp(x, alpha);
 }

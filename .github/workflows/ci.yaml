@@ -20,5 +20,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip pytest
           python -m pip install -r requirements-jax_transforms-test.txt
+      - name: Install CmdStan
+        run: |
+          import cmdstanpy
+          cmdstanpy.install_cmdstan()
+        shell: python
       - name: Test with pytest
         run: pytest jax_transforms/

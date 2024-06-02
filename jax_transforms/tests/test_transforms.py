@@ -8,11 +8,11 @@ from .. import (
     ILR,
     ExpandedSoftmax,
     NormalizedExponential,
-    StickBreakingAngular,
-    StickBreakingLogistic,
-    StickBreakingNormal,
-    StickBreakingPowerLogistic,
-    StickBreakingPowerNormal,
+    StickbreakingAngular,
+    StickbreakingLogistic,
+    StickbreakingNormal,
+    StickbreakingPowerLogistic,
+    StickbreakingPowerNormal,
 )
 
 jax.config.update("jax_enable_x64", True)
@@ -20,11 +20,11 @@ jax.config.update("jax_enable_x64", True)
 basic_transforms = [
     ALR,
     ILR,
-    StickBreakingAngular,
-    StickBreakingLogistic,
-    StickBreakingNormal,
-    StickBreakingPowerLogistic,
-    StickBreakingPowerNormal,
+    StickbreakingAngular,
+    StickbreakingLogistic,
+    StickbreakingNormal,
+    StickbreakingPowerLogistic,
+    StickbreakingPowerNormal,
 ]
 
 expanded_transforms = [

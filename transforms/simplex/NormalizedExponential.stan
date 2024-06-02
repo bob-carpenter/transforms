@@ -13,7 +13,7 @@ parameters {
 transformed parameters {
   simplex[N] x;
   real<lower=0> r = 0;
-  real log_det_jacobian = 0;
+  real log_det_jacobian = -lgamma(N);
   {
     vector[N] z;
     real log_u;

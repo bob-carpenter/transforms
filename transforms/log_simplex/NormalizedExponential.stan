@@ -13,7 +13,7 @@ functions {
     real log_r = log_sum_exp(z);
     vector[N] log_x = z - log_r;
     target += -log_x[1:N - 1];
-    target += std_normal_lpdf(y);
+    target += std_normal_lpdf(y) - lgamma(N);
     return log_x;
   }
 }

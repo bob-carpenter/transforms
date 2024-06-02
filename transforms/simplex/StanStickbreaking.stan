@@ -6,5 +6,5 @@ parameters {
   simplex[N] x;
 }
 model {
- target += target_density_lp(x, alpha);
+  target += target_density_lp(x, alpha);
 }

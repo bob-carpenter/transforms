@@ -1,7 +1,7 @@
 functions {
-    real exponential_log_qf(real logp){
-        return -log1m_exp(logp);
-    }
+  real exponential_log_qf(real logp){
+      return -log1m_exp(logp);
+  }
 }
 data {
   int<lower=0> N;

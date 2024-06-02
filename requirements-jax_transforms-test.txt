@@ -1,0 +1,6 @@
+jax
+jaxlib
+tensorflow_probability
+cmdstanpy
+arviz
+pytest

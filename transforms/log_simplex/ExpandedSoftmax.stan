@@ -1,10 +1,10 @@
 functions{
   vector augmented_softmax_log_simplex_constrain_lp(vector y) {
     int N = rows(y);
-    real log_r = log_sum_exp(y);
-    vector[N] log_x = y - log_r;
+    real r = log_sum_exp(y);
+    vector[N] log_x = y - r;
     target += log_x[N];
-    target += std_normal_lpdf(log_r - log(N));
+    target += std_normal_lpdf(r - log(N));
     return log_x;
   }
 }

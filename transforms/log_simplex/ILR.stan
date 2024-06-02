@@ -14,8 +14,8 @@ functions {
   vector inv_ilr_log_simplex_constrain_lp(vector y, matrix V) {
     int N = rows(y) + 1;
     vector[N] z = V * y;
-    real logr = log_sum_exp(z);
-    vector[N] log_x = z - logr;
+    real r = log_sum_exp(z);
+    vector[N] log_x = z - r;
     target += log_x[N] + 0.5 * log(N);
     return log_x;
   }

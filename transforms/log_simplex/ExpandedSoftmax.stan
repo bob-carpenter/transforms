@@ -3,7 +3,7 @@ functions{
     int N = rows(y);
     real log_r = log_sum_exp(y);
     vector[N] log_x = y - log_r;
-    target += -log_r;
+    target += log_x[N];
     target += std_normal_lpdf(log_r - log(N));
     return log_x;
   }

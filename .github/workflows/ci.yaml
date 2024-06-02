@@ -2,6 +2,10 @@ name: CI
 
 on: [push]
 
+env:
+  CMDSTAN_VERSION: "2.34.1"
+  CMDSTAN_PATH: "${{ GITHUB.WORKSPACE }}/.cmdstan/"
+
 jobs:
   jax_transforms:
     runs-on: ubuntu-latest
@@ -10,6 +14,12 @@ jobs:
         python-version: ["3.11"]
     steps:
       - uses: actions/checkout@v4
+      - name: Cache CmdStan
+        id: cache-cmdstan
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.CMDSTAN_PATH }}
+          key: cmdstan-${{ env.CMDSTAN_VERSION }}-${{ runner.os }}
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
@@ -23,7 +33,7 @@ jobs:
       - name: Install CmdStan
         run: |
           import cmdstanpy
-          cmdstanpy.install_cmdstan()
+          cmdstanpy.install_cmdstan(version="${{ env.CMDSTAN_VERSION }}")
         shell: python
       - name: Test with pytest
         run: pytest jax_transforms/

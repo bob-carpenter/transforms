@@ -16,8 +16,7 @@ class ALR:
 
     def constrain_with_logdetjac(self, y):
         z = jnp.append(y, 0)
-        r = jax.scipy.special.logsumexp(z)
-        logx = z - r
+        logx = jax.nn.log_softmax(z)
         x = jnp.exp(logx)
         logJ = jnp.sum(logx)
         return x, logJ

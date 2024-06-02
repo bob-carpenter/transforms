@@ -80,3 +80,12 @@ def test_expanded_transform(transform, N, seed):
     assert jnp.isclose(logJ, logJ_expected)
 
     assert trans.default_prior(r_x).shape == ()
+
+
+@pytest.mark.parametrize("N", [3, 5, 10])
+def test_ilr_semiorthogonal_matrix_properties(N):
+    ilr = ILR(N)
+    V = ilr.V
+    assert V.shape == (N, N - 1)
+    assert jnp.allclose(V.T @ V, jnp.eye(N - 1))
+    assert jnp.allclose(V.T @ jnp.ones(N), 0)

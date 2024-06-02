@@ -5,6 +5,7 @@ import pytest
 
 from .. import (
     ALR,
+    ILR,
     ExpandedSoftmax,
     NormalizedExponential,
     StickBreakingAngular,
@@ -18,6 +19,7 @@ jax.config.update("jax_enable_x64", True)
 
 basic_transforms = [
     ALR,
+    ILR,
     StickBreakingAngular,
     StickBreakingLogistic,
     StickBreakingNormal,

@@ -1,5 +1,5 @@
 functions{
-  vector augmented_softmax_log_simplex_constrain_lp(vector y) {
+  vector expanded_softmax_log_simplex_constrain_lp(vector y) {
     int N = rows(y);
     real r = log_sum_exp(y);
     vector[N] log_x = y - r;
@@ -16,7 +16,7 @@ parameters {
   vector[N] y;
 }
 transformed parameters {
-  vector<upper=0>[N] log_x = augmented_softmax_log_simplex_constrain_lp(y);
+  vector<upper=0>[N] log_x = expanded_softmax_log_simplex_constrain_lp(y);
   simplex[N] x = exp(log_x);
 }
 model {

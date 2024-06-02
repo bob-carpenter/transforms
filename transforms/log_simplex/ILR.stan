@@ -1,7 +1,7 @@
 functions {
   matrix semiorthogonal_matrix(int N) {
     matrix[N, N - 1] V;
-    real inv_nrm2 = inv_sqrt(N);
+    real inv_nrm2;
     for (n in 1:(N - 1)) {
       inv_nrm2 = inv_sqrt(n * (n + 1));
       V[1:n, n] = rep_vector(inv_nrm2, n);

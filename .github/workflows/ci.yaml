@@ -1,7 +1,7 @@
 name: CI
 
 on: [push]
-  
+
 jobs:
   jax_transforms:
     runs-on: ubuntu-latest

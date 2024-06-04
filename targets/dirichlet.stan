@@ -6,7 +6,4 @@ functions {
     lp += sum(lgamma(alpha)) - lgamma(sum(alpha));
     return lp;
   }
-  real target_density_lp(vector log_x, vector alpha){
-    return log_dirichlet_lpdf(log_x | alpha);
-  }
 }

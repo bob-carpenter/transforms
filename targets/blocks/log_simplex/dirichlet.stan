@@ -3,5 +3,5 @@ data {
   vector<lower=0>[N] alpha;
 }
 model {
-  target += target_density_lp(log_x, alpha);
+  target += log_dirichlet_lpdf(log_x | alpha);
 }

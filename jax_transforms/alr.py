@@ -9,14 +9,15 @@ class ALR:
     N: int
 
     def unconstrain(self, x):
-        return jnp.log(x[: self.N - 1]) - jnp.log(x[self.N - 1])
+        return jnp.log(x[..., :-1]) - jnp.log(x[..., -1:])
 
     def constrain(self, y):
-        return jax.nn.softmax(jnp.append(y, 0))
+        z = jnp.concatenate([y, jnp.zeros(y.shape[:-1] + (1,))], axis=-1)
+        return jax.nn.softmax(z, axis=-1)
 
     def constrain_with_logdetjac(self, y):
-        z = jnp.append(y, 0)
-        logx = jax.nn.log_softmax(z)
+        z = jnp.concatenate([y, jnp.zeros(y.shape[:-1] + (1,))], axis=-1)
+        logx = jax.nn.log_softmax(z, axis=-1)
         x = jnp.exp(logx)
-        logJ = jnp.sum(logx)
+        logJ = jnp.sum(logx, axis=-1)
         return x, logJ

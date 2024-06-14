@@ -27,12 +27,12 @@ class NormalizedExponential:
     def constrain_with_logdetjac(self, y):
         r_x = self.constrain(y)
         logJ = (
-            jnp.sum(jax.scipy.stats.norm.logpdf(y))
+            jnp.sum(jax.scipy.stats.norm.logpdf(y), axis=-1)
             - jax.scipy.special.gammaln(self.N)
             - self.default_prior(r_x)
         )
         return r_x, logJ
 
     def default_prior(self, r_x):
-        r = r_x[0]
+        r = r_x[..., 0]
         return distributions.ExpGamma(concentration=self.N, rate=1).log_prob(r)

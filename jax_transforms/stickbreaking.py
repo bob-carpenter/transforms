@@ -4,19 +4,24 @@ import jax
 import jax.numpy as jnp
 from tensorflow_probability.substrates.jax import distributions
 
+from .util import vmap_over_leading_axes
+
 
 @dataclass
 class StickbreakingBase:
     N: int
 
-    def unconstrain(self, x):
+    def _unconstrain_single(self, x):
         def _running_remainder(remainder, xi):
             return remainder - xi, remainder
 
         z = x[:-1] / jax.lax.scan(_running_remainder, 1, x[:-1])[1]
         return z
 
-    def constrain(self, z):
+    def unconstrain(self, x):
+        return vmap_over_leading_axes(self._unconstrain_single, x)
+
+    def _constrain_single(self, z):
         def _break_stick(remainder, zi):
             xi = remainder * zi
             remainder -= xi
@@ -26,9 +31,12 @@ class StickbreakingBase:
         x = jnp.append(x_minus, x_N)
         return x
 
+    def constrain(self, z):
+        return vmap_over_leading_axes(self._constrain_single, z)
+
     def constrain_with_logdetjac(self, z):
         x = self.constrain(z)
-        logJ = jnp.inner(jnp.arange(self.N - 2, 0, -1), jnp.log1p(-z[:-1]))
+        logJ = jnp.inner(jnp.arange(self.N - 2, 0, -1), jnp.log1p(-z[..., :-1]))
         return x, logJ
 
 
@@ -50,7 +58,7 @@ class StickbreakingCDF:
     def constrain_with_logdetjac(self, y):
         z = self.distribution.cdf(y)
         x, logJ = StickbreakingBase(self.N).constrain_with_logdetjac(z)
-        logJ += jnp.sum(self.distribution.log_prob(y))
+        logJ += jnp.sum(self.distribution.log_prob(y), axis=-1)
         return x, logJ
 
 
@@ -87,9 +95,9 @@ class StickbreakingPowerCDF:
 
     def constrain_with_logdetjac(self, y):
         x = self.constrain(y)
-        logJ = jnp.sum(self.distribution.log_prob(y)) - jax.scipy.special.gammaln(
-            self.N
-        )
+        logJ = jnp.sum(
+            self.distribution.log_prob(y), axis=-1
+        ) - jax.scipy.special.gammaln(self.N)
         return x, logJ
 
 
@@ -132,6 +140,7 @@ class StickbreakingAngular:
             jnp.log(cos_phi)
             + jnp.log(jnp.sin(phi))
             + jnp.log(phi)
-            + jnp.log1p(-phi * 2 / jnp.pi)
+            + jnp.log1p(-phi * 2 / jnp.pi),
+            axis=-1,
         ) + (self.N - 1) * jnp.log(2)
         return x, logJ

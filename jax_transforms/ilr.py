@@ -31,14 +31,14 @@ class ILR:
         self.V = _make_semiorthogonal_matrix(self.N)
 
     def unconstrain(self, x):
-        return self.V.T @ jnp.log(x)
+        return jnp.dot(jnp.log(x), self.V)
 
     def constrain(self, y):
-        return jax.nn.softmax(self.V @ y)
+        return jax.nn.softmax(jnp.dot(y, self.V.T), axis=-1)
 
     def constrain_with_logdetjac(self, y):
-        z = self.V @ y
-        logx = jax.nn.log_softmax(z)
+        z = jnp.dot(y, self.V.T)
+        logx = jax.nn.log_softmax(z, axis=-1)
         x = jnp.exp(logx)
-        logJ = jnp.sum(logx) + jnp.log(self.N) / 2
+        logJ = jnp.sum(logx, axis=-1) + jnp.log(self.N) / 2
         return x, logJ

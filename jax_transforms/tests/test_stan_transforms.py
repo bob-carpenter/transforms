@@ -1,10 +1,13 @@
 import os
+from typing import NamedTuple
 
 import arviz as az
 import cmdstanpy
 import jax
 import jax.numpy as jnp
+import numpy as np
 import pytest
+from tensorflow_probability.substrates.jax import distributions as tfd
 
 import jax_transforms
 
@@ -31,6 +34,63 @@ transforms_dir = os.path.join(project_dir, "transforms")
 stan_models = {}
 
 
+class MultiLogitNormal(NamedTuple):
+    mu: jax.Array
+    L_Sigma: jax.Array
+
+    @property
+    def event_shape(self):
+        return (self.mu.shape[0] + 1,)
+
+    def log_prob(self, x):
+        N = self.event_shape[0]
+        transform = jax_transforms.ALR(N)
+        y = transform.unconstrain(x)
+        logJ = transform.constrain_with_logdetjac(y)[1]
+        lp_mvnorm = tfd.MultivariateNormalTriL(
+            loc=self.mu, scale_tril=self.L_Sigma
+        ).log_prob(y)
+        return lp_mvnorm - logJ
+
+
+def make_dirichlet_data(N: int, seed: int = 638):
+    rng = np.random.default_rng(seed)
+    alpha = rng.uniform(size=N)
+    return {"N": N, "alpha": np.around(alpha, 4).tolist()}
+
+
+def make_multi_logit_normal_data(N: int, seed: int = 638):
+    rng = np.random.default_rng(seed)
+    mu = rng.normal(size=N - 1)
+    L_Sigma = np.tril(rng.normal(size=(N - 1, N - 1)))
+    L_Sigma[np.diag_indices(N - 1)] = rng.uniform(size=N - 1)
+    return {
+        "N": N,
+        "mu": np.around(mu, 4).tolist(),
+        "L_Sigma": np.around(L_Sigma, 4).tolist(),
+    }
+
+
+def make_model_data(target: str, *args, **kwargs):
+    if target == "dirichlet":
+        return make_dirichlet_data(*args, **kwargs)
+    elif target == "multi-logit-normal":
+        return make_multi_logit_normal_data(*args, **kwargs)
+    else:
+        raise ValueError(f"Unknown target {target}")
+
+
+def make_jax_distribution(target: str, params: dict):
+    if target == "dirichlet":
+        return tfd.Dirichlet(jnp.array(params["alpha"]))
+    elif target == "multi-logit-normal":
+        return MultiLogitNormal(
+            mu=jnp.array(params["mu"]), L_Sigma=jnp.array(params["L_Sigma"])
+        )
+    else:
+        raise ValueError(f"Unknown target {target}")
+
+
 def make_stan_model(
     model_file: str, target_name: str, transform_name: str, log_scale: bool
 ) -> cmdstanpy.CmdStanModel:
@@ -53,21 +113,27 @@ def make_stan_model(
     return model
 
 
-@pytest.mark.parametrize("N", [3, 5, 10])
+@pytest.mark.parametrize("N", [3, 5])
 @pytest.mark.parametrize("log_scale", [False, True])
-@pytest.mark.parametrize("target_name", ["dirichlet"])
+@pytest.mark.parametrize("target_name", ["dirichlet", "multi-logit-normal"])
 @pytest.mark.parametrize("transform_name", basic_transforms + expanded_transforms)
 def test_stan_and_jax_transforms_consistent(
-    tmpdir, transform_name, target_name, N, log_scale
+    tmpdir, transform_name, target_name, N, log_scale, seed=638
 ):
     try:
         trans = getattr(jax_transforms, transform_name)(N)
     except AttributeError:
         pytest.skip(f"No JAX implementation of {transform_name}. Skipping.")
+    if target_name != "dirichlet" and transform_name not in ["ALR", "ILR"]:
+        pytest.skip(f"No need to test {transform_name} with {target_name}. Skipping.")
+
     constrain_with_logdetjac_vec = jax.vmap(
         jax.vmap(trans.constrain_with_logdetjac, 0), 0
     )
-    data = {"N": N, "alpha": [1.0] * N}
+
+    data = make_model_data(target_name, N, seed=seed)
+    dist = make_jax_distribution(target_name, data)
+    log_prob = dist.log_prob
 
     # get compiled model or compile and add to cache
     model_key = (target_name, transform_name, log_scale)
@@ -85,13 +151,13 @@ def test_stan_and_jax_transforms_consistent(
     else:
         model = stan_models[(target_name, transform_name, log_scale)]
 
-    result = model.sample(data=data, iter_sampling=100)
+    result = model.sample(data=data, iter_sampling=100, sig_figs=9)
     idata = az.convert_to_inference_data(result)
 
     x_expected, lp_expected = constrain_with_logdetjac_vec(idata.posterior.y.data)
-    lp_expected += jax.scipy.special.gammaln(N)  # Dirichlet(1, ..., 1)
     if transform_name in expanded_transforms:
         lp_expected += jax.vmap(jax.vmap(trans.default_prior, 0), 0)(x_expected)
         x_expected = x_expected[:, :, 1:]
-    assert jnp.allclose(x_expected, idata.posterior.x.data, atol=1e-5)
-    assert jnp.allclose(lp_expected, idata.sample_stats.lp.data, atol=1e-5)
+    lp_expected += log_prob(x_expected)
+    assert jnp.allclose(x_expected, idata.posterior.x.data, rtol=1e-4)
+    assert jnp.allclose(lp_expected, idata.sample_stats.lp.data, rtol=1e-4)

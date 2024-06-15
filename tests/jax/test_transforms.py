@@ -126,6 +126,7 @@ def test_normalized_transforms_consistent(N, seed=42):
 @pytest.mark.parametrize("N", [3, 5, 10])
 def test_ilr_semiorthogonal_matrix_properties(N):
     from simplex_transforms.jax.transforms import ilr
+
     V = ilr._make_semiorthogonal_matrix(N)
     assert V.shape == (N, N - 1)
     assert jnp.allclose(V.T @ V, jnp.eye(N - 1))

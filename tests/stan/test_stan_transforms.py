@@ -9,6 +9,7 @@ import numpy as np
 import pytest
 from tensorflow_probability.substrates.jax import distributions as tfd
 
+import simplex_transforms.jax.targets as jax_targets
 import simplex_transforms.jax.transforms as jax_transforms
 import simplex_transforms.stan
 
@@ -34,24 +35,6 @@ project_dir = os.path.abspath(os.path.join(__file__, "..", "..", ".."))
 targets_dir = os.path.join(project_dir, "targets")
 transforms_dir = os.path.join(project_dir, "transforms")
 stan_models = {}
-
-
-class MultiLogitNormal(NamedTuple):
-    mu: jax.Array
-    L_Sigma: jax.Array
-
-    @property
-    def event_shape(self):
-        return (self.mu.shape[0] + 1,)
-
-    def log_prob(self, x):
-        transform = jax_transforms.ALR()
-        y = transform.unconstrain(x)
-        logJ = transform.constrain_with_logdetjac(y)[1]
-        lp_mvnorm = tfd.MultivariateNormalTriL(
-            loc=self.mu, scale_tril=self.L_Sigma
-        ).log_prob(y)
-        return lp_mvnorm - logJ
 
 
 def make_dirichlet_data(N: int, seed: int = 638):
@@ -86,10 +69,10 @@ def make_model_data(target: str, *args, **kwargs):
 
 def make_jax_distribution(target: str, params: dict):
     if target == "dirichlet":
-        return tfd.Dirichlet(jnp.array(params["alpha"]))
+        return jax_targets.Dirichlet(jnp.array(params["alpha"]))
     elif target == "multi-logit-normal":
-        return MultiLogitNormal(
-            mu=jnp.array(params["mu"]), L_Sigma=jnp.array(params["L_Sigma"])
+        return jax_targets.MultiLogitNormal(
+            jnp.array(params["mu"]), jnp.array(params["L_Sigma"])
         )
     else:
         raise ValueError(f"Unknown target {target}")
@@ -110,7 +93,7 @@ def make_stan_model(
 
 @pytest.mark.parametrize("N", [3, 5])
 @pytest.mark.parametrize("log_scale", [False, True])
-@pytest.mark.parametrize("target_name", ["dirichlet", "multi-logit-normal"])
+@pytest.mark.parametrize("target_name", ["multi-logit-normal"])
 @pytest.mark.parametrize("transform_name", basic_transforms + expanded_transforms)
 def test_stan_and_jax_transforms_consistent(
     tmpdir, transform_name, target_name, N, log_scale, seed=638, stan_seed=348

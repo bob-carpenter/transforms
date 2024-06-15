@@ -94,9 +94,9 @@ def test_transform(transform, N, batch_dims, seed):
 
     # verify basic properties are satisfied
     if is_expanded:
-        assert trans.default_prior(x).shape == batch_dims
         r, x = x
         assert r.shape == batch_dims
+        assert trans.default_prior(x).log_prob(r).shape == batch_dims
     assert x.shape[-1] == N
     assert jnp.all(x >= 0)
     assert jnp.allclose(jnp.sum(x, axis=-1), 1)
@@ -110,13 +110,17 @@ def test_normalized_transforms_consistent(N, seed=42):
 
     y = jax.random.normal(key=jax.random.key(seed), shape=(N,))
     r_x = trans_exp.constrain(y)
+    r, x = r_x
     assert _allclose(r_x, trans_gamma.constrain(y))
     assert jnp.allclose(trans_exp.unconstrain(r_x), trans_gamma.unconstrain(r_x))
     assert _allclose(
         trans_exp.constrain_with_logdetjac(y),
         trans_gamma.constrain_with_logdetjac(y),
     )
-    assert jnp.allclose(trans_exp.default_prior(r_x), trans_gamma.default_prior(r_x))
+    assert jnp.allclose(
+        trans_exp.default_prior(x).log_prob(r),
+        trans_gamma.default_prior(x).log_prob(r),
+    )
 
 
 @pytest.mark.parametrize("N", [3, 5, 10])

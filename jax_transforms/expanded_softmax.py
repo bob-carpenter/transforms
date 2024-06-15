@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 import jax
 import jax.numpy as jnp
+from tensorflow_probability.substrates.jax import distributions
 
 
 @dataclass
@@ -22,7 +23,6 @@ class ExpandedSoftmax:
         logJ = jnp.sum(logx, axis=-1)
         return (r, x), logJ
 
-    def default_prior(self, r_x):
-        r, x = r_x
+    def default_prior(self, x) -> distributions.Distribution:
         N = x.shape[-1]
-        return jax.scipy.stats.norm.logpdf(r, loc=jnp.log(N), scale=1)
+        return distributions.Normal(loc=jnp.log(N), scale=1)

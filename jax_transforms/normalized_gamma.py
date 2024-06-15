@@ -37,9 +37,9 @@ class NormalizedGamma:
         return r_x, logJ
 
     def default_prior(self, r_x):
-        r, x = r_x
-        N = x.shape[-1]
-        return distributions.ExpGamma(concentration=N, rate=1).log_prob(r)
+        r, _ = r_x
+        alpha_sum = jnp.sum(self.alpha, axis=-1)
+        return distributions.ExpGamma(concentration=alpha_sum, rate=1).log_prob(r)
 
 
 @dataclass
@@ -58,3 +58,8 @@ class NormalizedExponential(NormalizedGamma):
     def _dirichlet_log_prob(self, x):
         N = x.shape[-1]
         return jax.scipy.special.gammaln(N)
+
+    def default_prior(self, r_x):
+        r, x = r_x
+        N = x.shape[-1]
+        return distributions.ExpGamma(concentration=N, rate=1).log_prob(r)

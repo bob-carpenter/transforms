@@ -8,6 +8,7 @@ from .. import (
     ILR,
     ExpandedSoftmax,
     NormalizedExponential,
+    NormalizedGamma,
     StickbreakingAngular,
     StickbreakingLogistic,
     StickbreakingNormal,
@@ -31,16 +32,17 @@ basic_transforms = [
 expanded_transforms = [
     ExpandedSoftmax,
     NormalizedExponential,
+    NormalizedGamma,
 ]
 
 
-def _allclose(x, y):
+def _allclose(x, y, **kwargs):
     if isinstance(x, tuple) and isinstance(y, tuple):
-        return jnp.all(jnp.array([jnp.allclose(xi, yi) for xi, yi in zip(x, y)]))
+        return jnp.all(jnp.array([_allclose(xi, yi, **kwargs) for xi, yi in zip(x, y)]))
     elif isinstance(x, tuple) or isinstance(y, tuple):
         raise ValueError("x and y must both be tuples or neither")
     else:
-        return jnp.allclose(x, y)
+        return jnp.allclose(x, y, **kwargs)
 
 
 def logdetjac(f):
@@ -61,14 +63,23 @@ def logdetjac(f):
     return logdetjac_f
 
 
-@pytest.mark.parametrize("transform", basic_transforms + expanded_transforms)
+def get_random_params(transform_type, N: int, key) -> tuple:
+    if transform_type is NormalizedGamma:
+        alpha = jax.random.exponential(key, shape=(N,))
+        return (alpha,)
+    else:
+        return ()
+
+
+@pytest.mark.parametrize("seed", np.random.default_rng(0).integers(0, 1000, 5))
 @pytest.mark.parametrize("N", [3, 5, 10])
 @pytest.mark.parametrize("batch_dims", [(), (3,), (3, 4)])
-@pytest.mark.parametrize("seed", np.random.default_rng(0).integers(0, 1000, 10))
+@pytest.mark.parametrize("transform", basic_transforms + expanded_transforms)
 def test_transform(transform, N, batch_dims, seed):
-    trans = transform()
+    key, subkey = jax.random.split(jax.random.key(seed))
+    trans = transform(*get_random_params(transform, N, subkey))
     M = N if transform in expanded_transforms else N - 1
-    y = jax.random.normal(key=jax.random.key(seed), shape=batch_dims + (M,))
+    y = jax.random.normal(key=key, shape=batch_dims + (M,))
 
     # check consistency of various methods
     x = trans.constrain(y)
@@ -89,6 +100,23 @@ def test_transform(transform, N, batch_dims, seed):
     assert x.shape[-1] == N
     assert jnp.all(x >= 0)
     assert jnp.allclose(jnp.sum(x, axis=-1), 1)
+
+
+@pytest.mark.parametrize("N", [3, 5, 7])
+def test_normalized_transforms_consistent(N, seed=42):
+    alpha = jnp.ones(N)
+    trans_exp = NormalizedExponential()
+    trans_gamma = NormalizedGamma(alpha)
+
+    y = jax.random.normal(key=jax.random.key(seed), shape=(N,))
+    r_x = trans_exp.constrain(y)
+    assert _allclose(r_x, trans_gamma.constrain(y))
+    assert jnp.allclose(trans_exp.unconstrain(r_x), trans_gamma.unconstrain(r_x))
+    assert _allclose(
+        trans_exp.constrain_with_logdetjac(y),
+        trans_gamma.constrain_with_logdetjac(y),
+    )
+    assert jnp.allclose(trans_exp.default_prior(r_x), trans_gamma.default_prior(r_x))
 
 
 @pytest.mark.parametrize("N", [3, 5, 10])

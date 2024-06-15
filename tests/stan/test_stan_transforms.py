@@ -1,5 +1,4 @@
 import os
-from typing import NamedTuple
 
 import arviz as az
 import cmdstanpy
@@ -7,7 +6,6 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from tensorflow_probability.substrates.jax import distributions as tfd
 
 import simplex_transforms.jax.targets as jax_targets
 import simplex_transforms.jax.transforms as jax_transforms

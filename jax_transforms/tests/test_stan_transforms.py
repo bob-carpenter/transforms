@@ -43,8 +43,7 @@ class MultiLogitNormal(NamedTuple):
         return (self.mu.shape[0] + 1,)
 
     def log_prob(self, x):
-        N = self.event_shape[0]
-        transform = jax_transforms.ALR(N)
+        transform = jax_transforms.ALR()
         y = transform.unconstrain(x)
         logJ = transform.constrain_with_logdetjac(y)[1]
         lp_mvnorm = tfd.MultivariateNormalTriL(

@@ -121,7 +121,7 @@ def test_stan_and_jax_transforms_consistent(
     tmpdir, transform_name, target_name, N, log_scale, seed=638
 ):
     try:
-        trans = getattr(jax_transforms, transform_name)(N)
+        trans = getattr(jax_transforms, transform_name)()
     except AttributeError:
         pytest.skip(f"No JAX implementation of {transform_name}. Skipping.")
     if target_name != "dirichlet" and transform_name not in ["ALR", "ILR"]:
@@ -156,8 +156,8 @@ def test_stan_and_jax_transforms_consistent(
 
     x_expected, lp_expected = constrain_with_logdetjac_vec(idata.posterior.y.data)
     if transform_name in expanded_transforms:
-        lp_expected += jax.vmap(jax.vmap(trans.default_prior, 0), 0)(x_expected)
-        x_expected = x_expected[:, :, 1:]
+        r_expected, x_expected = x_expected
+        lp_expected += trans.default_prior(x_expected).log_prob(r_expected)
     lp_expected += log_prob(x_expected)
     assert jnp.allclose(x_expected, idata.posterior.x.data, rtol=1e-4)
     assert jnp.allclose(lp_expected, idata.sample_stats.lp.data, rtol=1e-4)

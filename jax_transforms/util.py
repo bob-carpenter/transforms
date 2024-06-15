@@ -1,5 +1,6 @@
 import jax
 
+
 def vmap_over_leading_axes(fun, arr):
     num_leading_axes = arr.ndim - 1
     vmapped_fun = fun

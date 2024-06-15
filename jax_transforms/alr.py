@@ -1,13 +1,8 @@
-from dataclasses import dataclass
-
 import jax
 import jax.numpy as jnp
 
 
-@dataclass
 class ALR:
-    N: int
-
     def unconstrain(self, x):
         return jnp.log(x[..., :-1]) - jnp.log(x[..., -1:])
 

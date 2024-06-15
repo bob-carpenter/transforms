@@ -1,7 +1,7 @@
 from .alr import ALR
 from .expanded_softmax import ExpandedSoftmax
 from .ilr import ILR
-from .normalized_exponential import NormalizedExponential
+from .normalized_gamma import NormalizedExponential, NormalizedGamma
 from .stickbreaking import (
     StickbreakingAngular,
     StickbreakingLogistic,
@@ -15,6 +15,7 @@ __all__ = [
     "ExpandedSoftmax",
     "ILR",
     "NormalizedExponential",
+    "NormalizedGamma",
     "StickbreakingAngular",
     "StickbreakingLogistic",
     "StickbreakingNormal",

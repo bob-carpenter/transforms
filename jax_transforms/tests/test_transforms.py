@@ -83,6 +83,7 @@ def test_transform(transform, N, batch_dims, seed):
 
     # verify basic properties are satisfied
     if is_expanded:
+        assert trans.default_prior(x).shape == batch_dims
         r, x = x
         assert r.shape == batch_dims
     assert x.shape[-1] == N

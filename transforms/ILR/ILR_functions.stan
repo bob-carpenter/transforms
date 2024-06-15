@@ -1,4 +1,4 @@
-matrix semiorthogonal_matrix(int N) {
+matrix semiorthogonal_matrix(data int N) {
   matrix[N, N - 1] V;
   real inv_nrm2;
   for (n in 1 : (N - 1)) {
@@ -10,7 +10,7 @@ matrix semiorthogonal_matrix(int N) {
   return V;
 }
 
-vector inv_ilr_simplex_constrain_lp(vector y, matrix V) {
+vector inv_ilr_simplex_constrain_lp(vector y, data matrix V) {
   int N = rows(y) + 1;
   vector[N] z = V * y;
   real r = log_sum_exp(z);
@@ -19,7 +19,7 @@ vector inv_ilr_simplex_constrain_lp(vector y, matrix V) {
   return x;
 }
 
-vector inv_ilr_log_simplex_constrain_lp(vector y, matrix V) {
+vector inv_ilr_log_simplex_constrain_lp(vector y, data matrix V) {
   int N = rows(y) + 1;
   vector[N] z = V * y;
   real r = log_sum_exp(z);

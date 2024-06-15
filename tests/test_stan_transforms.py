@@ -10,6 +10,7 @@ import pytest
 from tensorflow_probability.substrates.jax import distributions as tfd
 
 import simplex_transforms.jax.transforms as jax_transforms
+import simplex_transforms.stan
 
 jax.config.update("jax_enable_x64", True)
 
@@ -97,21 +98,12 @@ def make_jax_distribution(target: str, params: dict):
 def make_stan_model(
     model_file: str, target_name: str, transform_name: str, log_scale: bool
 ) -> cmdstanpy.CmdStanModel:
-    target_dir = os.path.join(targets_dir, target_name)
-    transform_dir = os.path.join(transforms_dir, transform_name)
-    space = "log_simplex" if log_scale else "simplex"
-    model_code = f"""
-    functions {{
-    #include {target_name}_functions.stan
-    #include {transform_name}_functions.stan
-    }}
-    #include {target_name}_data.stan
-    #include {transform_name}_parameters_{space}.stan
-    #include {target_name}_model_{space}.stan
-    """
+    model_code, include_paths = simplex_transforms.stan.make_stan_code(
+        target_name, transform_name, log_scale
+    )
     with open(model_file, "w") as f:
         f.write(model_code)
-    stanc_options = {"include-paths": ",".join([target_dir, transform_dir])}
+    stanc_options = {"include-paths": ",".join(include_paths)}
     model = cmdstanpy.CmdStanModel(stan_file=model_file, stanc_options=stanc_options)
     return model
 

@@ -34,7 +34,9 @@ tests = [
   "cmdstanpy",
   "jax",
   "jaxlib",
+  "jaxtyping",
   "pytest",
+  "tensorflow_probability",
 ]
 
 [tool.setuptools.packages.find]

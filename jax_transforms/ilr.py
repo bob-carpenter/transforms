@@ -1,5 +1,3 @@
-from dataclasses import dataclass, field
-
 import jax
 import jax.numpy as jnp
 
@@ -22,7 +20,6 @@ def _make_semiorthogonal_matrix(N: int):
     return V
 
 
-@dataclass
 class ILR:
     def unconstrain(self, x):
         N = x.shape[-1]

@@ -7,7 +7,6 @@ from tensorflow_probability.substrates.jax import distributions
 from .util import vmap_over_leading_axes
 
 
-@dataclass
 class StickbreakingBase:
     def _unconstrain_single(self, x):
         def _running_remainder(remainder, xi):
@@ -39,7 +38,6 @@ class StickbreakingBase:
         return x, logJ
 
 
-@dataclass
 class StickbreakingCDF:
     def get_distribution(self, N: int) -> distributions.Distribution:
         raise NotImplementedError
@@ -65,13 +63,11 @@ class StickbreakingCDF:
         return x, logJ
 
 
-@dataclass
 class StickbreakingLogistic(StickbreakingCDF):
     def get_distribution(self, N: int) -> distributions.Logistic:
         return distributions.Logistic(loc=jnp.log(jnp.arange(N - 1, 0, -1)), scale=1)
 
 
-@dataclass
 class StickbreakingNormal(StickbreakingCDF):
     def get_distribution(self, N: int) -> distributions.Normal:
         return distributions.Normal(loc=jnp.log(jnp.arange(N - 1, 0, -1)) / 2, scale=1)
@@ -104,19 +100,16 @@ class StickbreakingPowerCDF:
         return x, logJ
 
 
-@dataclass
 class StickbreakingPowerLogistic(StickbreakingPowerCDF):
     def __init__(self):
         super().__init__(distributions.Logistic(loc=0, scale=1))
 
 
-@dataclass
 class StickbreakingPowerNormal(StickbreakingPowerCDF):
     def __init__(self):
         super().__init__(distributions.Normal(loc=0, scale=1))
 
 
-@dataclass
 class StickbreakingAngular:
     def unconstrain(self, x):
         z = StickbreakingBase().unconstrain(x)

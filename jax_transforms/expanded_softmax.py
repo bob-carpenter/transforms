@@ -1,11 +1,8 @@
-from dataclasses import dataclass
-
 import jax
 import jax.numpy as jnp
 from tensorflow_probability.substrates.jax import distributions
 
 
-@dataclass
 class ExpandedSoftmax:
     def unconstrain(self, r_x):
         r, x = r_x

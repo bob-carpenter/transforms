@@ -41,7 +41,6 @@ class NormalizedGamma:
         return distributions.ExpGamma(concentration=alpha_sum, rate=1)
 
 
-@dataclass
 class NormalizedExponential(NormalizedGamma):
     def __init__(self):
         super().__init__(alpha=jnp.ones(()))

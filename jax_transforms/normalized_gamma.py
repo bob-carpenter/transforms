@@ -29,7 +29,7 @@ class NormalizedGamma:
 
     def constrain_with_logdetjac(self, y):
         r_x = self.constrain(y)
-        x = r_x[..., 1:]
+        _, x = r_x
         lp_norm = jnp.sum(jax.scipy.stats.norm.logpdf(y), axis=-1)
         lp_r = self.default_prior(r_x)
         lp_dirichlet = self._dirichlet_log_prob(x)
@@ -37,8 +37,8 @@ class NormalizedGamma:
         return r_x, logJ
 
     def default_prior(self, r_x):
-        N = r_x.shape[-1] - 1
-        r = r_x[..., 0]
+        r, x = r_x
+        N = x.shape[-1]
         return distributions.ExpGamma(concentration=N, rate=1).log_prob(r)
 
 

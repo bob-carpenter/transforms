@@ -65,7 +65,7 @@ def transform_and_model_logscale(request):
 def test_stan_and_jax_transforms_consistent(transform_and_model, N):
     transform_name, model = transform_and_model
     try:
-        trans = getattr(jax_transforms, transform_name)(N)
+        trans = getattr(jax_transforms, transform_name)()
     except AttributeError:
         pytest.skip(f"No JAX implementation of {transform_name}. Skipping.")
     constrain_with_logdetjac_vec = jax.vmap(
@@ -78,8 +78,9 @@ def test_stan_and_jax_transforms_consistent(transform_and_model, N):
 
     x_expected, lp_expected = constrain_with_logdetjac_vec(idata.posterior.y.data)
     if transform_name in expanded_transforms:
-        lp_expected += jax.vmap(jax.vmap(trans.default_prior, 0), 0)(x_expected)
-        x_expected = x_expected[:, :, 1:]
+        r_expected, x_expected = x_expected
+        lp_expected += trans.default_prior(x_expected).log_prob(r_expected)
+
     assert jnp.allclose(x_expected, idata.posterior.x.data, atol=1e-5)
     assert jnp.allclose(lp_expected, idata.sample_stats.lp.data, atol=1e-5)
 
@@ -88,7 +89,7 @@ def test_stan_and_jax_transforms_consistent(transform_and_model, N):
 def test_stan_and_jax_transforms_consistent_logscale(transform_and_model_logscale, N):
     transform_name, model = transform_and_model_logscale
     try:
-        trans = getattr(jax_transforms, transform_name)(N)
+        trans = getattr(jax_transforms, transform_name)()
     except AttributeError:
         pytest.skip(f"No JAX implementation of {transform_name}. Skipping.")
     constrain_with_logdetjac_vec = jax.vmap(
@@ -101,8 +102,8 @@ def test_stan_and_jax_transforms_consistent_logscale(transform_and_model_logscal
 
     x_expected, lp_expected = constrain_with_logdetjac_vec(idata.posterior.y.data)
     if transform_name in expanded_transforms:
-        lp_expected += jax.vmap(jax.vmap(trans.default_prior, 0), 0)(x_expected)
-        x_expected = x_expected[:, :, 1:]
+        r_expected, x_expected = x_expected
+        lp_expected += trans.default_prior(x_expected).log_prob(r_expected)
     log_x_expected = jnp.log(x_expected)
     assert jnp.allclose(log_x_expected, idata.posterior.log_x.data, atol=1e-5)
     assert jnp.allclose(x_expected, idata.posterior.x.data, atol=1e-5)

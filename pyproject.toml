@@ -37,8 +37,5 @@ tests = [
 ]
 
 [tool.setuptools.packages.find]
-exclude = [
-  "targets",
-  "transforms",
-]
+include = ["simplex_transforms"]
 

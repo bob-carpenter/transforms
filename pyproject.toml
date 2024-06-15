@@ -26,6 +26,7 @@ dependencies = []
 jax = [
   "jax",
   "jaxlib",
+  "jaxtyping",
   "tensorflow_probability",
 ]
 tests = [

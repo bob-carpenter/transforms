@@ -6,8 +6,6 @@ import jax.numpy as jnp
 
 @dataclass
 class ExpandedSoftmax:
-    N: int
-
     def unconstrain(self, r_x):
         r = r_x[..., :1]
         x = r_x[..., 1:]
@@ -28,5 +26,6 @@ class ExpandedSoftmax:
         return r_x, logJ
 
     def default_prior(self, r_x):
+        N = r_x.shape[-1] - 1
         r = r_x[..., 0]
-        return jax.scipy.stats.norm.logpdf(r, loc=jnp.log(self.N), scale=1)
+        return jax.scipy.stats.norm.logpdf(r, loc=jnp.log(N), scale=1)

@@ -39,7 +39,7 @@ expanded_transforms = [
 @pytest.mark.parametrize("batch_dims", [(), (3,), (3, 4)])
 @pytest.mark.parametrize("seed", np.random.default_rng(0).integers(0, 1000, 10))
 def test_basic_transform(transform, N, batch_dims, seed):
-    trans = transform(N)
+    trans = transform()
     y = jax.random.normal(key=jax.random.key(seed), shape=batch_dims + (N - 1,))
 
     x = trans.constrain(y)
@@ -66,7 +66,7 @@ def test_basic_transform(transform, N, batch_dims, seed):
 @pytest.mark.parametrize("batch_dims", [(), (3,), (3, 4)])
 @pytest.mark.parametrize("seed", np.random.default_rng(0).integers(0, 1000, 10))
 def test_expanded_transform(transform, N, batch_dims, seed):
-    trans = transform(N)
+    trans = transform()
     y = jax.random.normal(key=jax.random.key(seed), shape=batch_dims + (N,))
 
     r_x = trans.constrain(y)
@@ -93,8 +93,9 @@ def test_expanded_transform(transform, N, batch_dims, seed):
 
 @pytest.mark.parametrize("N", [3, 5, 10])
 def test_ilr_semiorthogonal_matrix_properties(N):
-    ilr = ILR(N)
-    V = ilr.V
+    import jax_transforms.ilr
+
+    V = jax_transforms.ilr._make_semiorthogonal_matrix(N)
     assert V.shape == (N, N - 1)
     assert jnp.allclose(V.T @ V, jnp.eye(N - 1))
     assert jnp.allclose(V.T @ jnp.ones(N), 0)

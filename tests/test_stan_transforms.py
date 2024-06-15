@@ -9,7 +9,7 @@ import numpy as np
 import pytest
 from tensorflow_probability.substrates.jax import distributions as tfd
 
-import jax_transforms
+import simplex_transforms.jax.transforms as jax_transforms
 
 jax.config.update("jax_enable_x64", True)
 

@@ -16,6 +16,7 @@ jax.config.update("jax_enable_x64", True)
 basic_transforms = [
     "ALR",
     "ILR",
+    "StanStickbreaking",
     "StickbreakingAngular",
     "StickbreakingLogistic",
     "StickbreakingNormal",
@@ -119,8 +120,12 @@ def make_stan_model(
 def test_stan_and_jax_transforms_consistent(
     tmpdir, transform_name, target_name, N, log_scale, seed=638
 ):
+    if transform_name == "StanStickbreaking":
+        jax_transform_name = "StickbreakingLogistic"
+    else:
+        jax_transform_name = transform_name
     try:
-        trans = getattr(jax_transforms, transform_name)()
+        trans = getattr(jax_transforms, jax_transform_name)()
     except AttributeError:
         pytest.skip(f"No JAX implementation of {transform_name}. Skipping.")
     if target_name != "dirichlet" and transform_name not in ["ALR", "ILR"]:
@@ -150,10 +155,14 @@ def test_stan_and_jax_transforms_consistent(
     else:
         model = stan_models[(target_name, transform_name, log_scale)]
 
-    result = model.sample(data=data, iter_sampling=100, sig_figs=9)
+    result = model.sample(data=data, iter_sampling=100, sig_figs=12)
     idata = az.convert_to_inference_data(result)
 
-    x_expected, lp_expected = constrain_with_logdetjac_vec(idata.posterior.y.data)
+    if transform_name == "StanStickbreaking":
+        y = trans.unconstrain(idata.posterior.x.data)
+    else:
+        y = idata.posterior.y.data
+    x_expected, lp_expected = constrain_with_logdetjac_vec(y)
     if transform_name in expanded_transforms:
         r_expected, x_expected = x_expected
         lp_expected += trans.default_prior(x_expected).log_prob(r_expected)

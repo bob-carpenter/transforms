@@ -39,3 +39,8 @@ tests = [
 [tool.setuptools.packages.find]
 include = ["simplex_transforms"]
 
+[tool.isort]
+profile = "black"
+
+[tool.ruff.lint]
+ignore = ["F722"]

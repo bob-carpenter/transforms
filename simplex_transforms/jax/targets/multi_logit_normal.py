@@ -31,7 +31,8 @@ class MultiLogitNormal(NamedTuple):
 
     @property
     def event_shape(self):
-        return self.distribution.event_shape
+        # we can't return a TensorShape since it isn't part of the TFP API
+        return (self.mu.shape[-1] + 1,)
 
     @property
     def distribution(self):

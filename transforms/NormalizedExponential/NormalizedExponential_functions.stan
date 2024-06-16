@@ -5,9 +5,8 @@ real exponential_log_qf(real logp) {
 vector normalized_exponential_simplex_constrain_lp(vector y) {
   int N = rows(y);
   vector[N] z;
-  real log_u;
   for (i in 1 : N) {
-    log_u = std_normal_lcdf(y[i]);
+    real log_u = std_normal_lcdf(y[i]);
     z[i] = log(exponential_log_qf(log_u));
   }
   real r = log_sum_exp(z);
@@ -19,9 +18,8 @@ vector normalized_exponential_simplex_constrain_lp(vector y) {
 vector normalized_exponential_log_simplex_constrain_lp(vector y) {
   int N = rows(y);
   vector[N] z;
-  real log_u;
   for (i in 1 : N) {
-    log_u = std_normal_lcdf(y[i]);
+    real log_u = std_normal_lcdf(y[i]);
     z[i] = log(exponential_log_qf(log_u));
   }
   real r = log_sum_exp(z);

@@ -1,3 +1,9 @@
+/**
+ * Return the Dirichlet density for the specified log simplex.
+ *
+ * @param theta a vector on the log simplex (N rows)
+ * @param alpha prior counts plus one (N rows)
+ */
 real log_dirichlet_lpdf(vector log_theta, vector alpha) {
   int N = rows(log_theta);
   if (N != rows(alpha))

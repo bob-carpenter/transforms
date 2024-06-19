@@ -91,7 +91,7 @@ def make_stan_model(
 
 @pytest.mark.parametrize("N", [3, 5])
 @pytest.mark.parametrize("log_scale", [False, True])
-@pytest.mark.parametrize("target_name", ["multi-logit-normal"])
+@pytest.mark.parametrize("target_name", ["dirichlet", "multi-logit-normal"])
 @pytest.mark.parametrize("transform_name", basic_transforms + expanded_transforms)
 def test_stan_and_jax_transforms_consistent(
     tmpdir, transform_name, target_name, N, log_scale, seed=638, stan_seed=348

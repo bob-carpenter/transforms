@@ -56,14 +56,17 @@ class MultiLogitNormal(NamedTuple):
 def make_dirichlet_data(N: int, seed: int = 638):
     rng = np.random.default_rng(seed)
     alpha = rng.uniform(size=N)
-    return {"N": N, "alpha": np.around(alpha, 4).tolist()}
+    return {"N": N, "alpha": np.around(10 * alpha, 4).tolist()}
 
 
 def make_multi_logit_normal_data(N: int, seed: int = 638):
     rng = np.random.default_rng(seed)
-    mu = rng.normal(size=N - 1)
+    mu = 0.01 * rng.normal(size=N - 1)
     L_Sigma = np.tril(rng.normal(size=(N - 1, N - 1)))
-    L_Sigma[np.diag_indices(N - 1)] = rng.uniform(size=N - 1)
+    diaginds = np.diag_indices(N - 1)
+    L_Sigma[diaginds] = np.abs(L_Sigma[diaginds])
+    sigma = 100 * np.random.uniform(size=N - 1)
+    L_Sigma = np.diag(sigma / np.linalg.norm(L_Sigma, axis=1)) @ L_Sigma
     return {
         "N": N,
         "mu": np.around(mu, 4).tolist(),

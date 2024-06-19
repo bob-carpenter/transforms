@@ -16,6 +16,6 @@ repos:
           - id: isort
             args: ["--profile", "black", "--filter-files"]
     - repo: https://github.com/RobertCraigie/pyright-python
-      rev: v1.1.365
+      rev: v1.1.367
       hooks:
       - id: pyright

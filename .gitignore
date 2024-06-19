@@ -9,3 +9,6 @@ __pycache__
 *.nc
 *.log
 /stan_models/**
+
+build
+*.egg-info

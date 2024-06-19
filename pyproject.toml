@@ -39,8 +39,12 @@ test = [
   "pytest",
 ]
 
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
 [tool.setuptools.packages.find]
-include = ["simplex_transforms"]
+include = ["simplex_transforms", "simplex_transforms.*"]
 
 [tool.isort]
 profile = "black"

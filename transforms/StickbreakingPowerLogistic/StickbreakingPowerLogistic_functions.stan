@@ -7,7 +7,7 @@ vector stickbreaking_power_logistic_simplex_constrain_lp(vector y) {
     real log_w = log_u / (N - i);
     real log_z = log1m_exp(log_w);
     x[i] = exp(log_cum_prod + log_z);
-    target += 2 * log_u - y[i]; // logistic_lupdf(y[i] | 0, 1);
+    target += 2 * log_u - y[i]; // logistic_lpdf(y[i] | 0, 1);
     log_cum_prod += log1m_exp(log_z);
   }
   x[N] = exp(log_cum_prod);
@@ -24,7 +24,7 @@ vector stickbreaking_power_logistic_log_simplex_constrain_lp(vector y) {
     real log_w = log_u / (N - i);
     real log_z = log1m_exp(log_w);
     log_x[i] = log_cum_prod + log_z;
-    target += 2 * log_u - y[i]; // logistic_lupdf(y[i] | 0, 1);
+    target += 2 * log_u - y[i]; // logistic_lpdf(y[i] | 0, 1);
     target += -log_x[i];
     log_cum_prod += log1m_exp(log_z);
   }

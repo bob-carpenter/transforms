@@ -118,7 +118,7 @@ def make_stan_model(
 @pytest.mark.parametrize("target_name", ["dirichlet", "multi-logit-normal"])
 @pytest.mark.parametrize("transform_name", basic_transforms + expanded_transforms)
 def test_stan_and_jax_transforms_consistent(
-    tmpdir, transform_name, target_name, N, log_scale, seed=638
+    tmpdir, transform_name, target_name, N, log_scale, seed=638, stan_seed=348
 ):
     if transform_name == "StanStickbreaking":
         jax_transform_name = "StickbreakingLogistic"
@@ -155,7 +155,7 @@ def test_stan_and_jax_transforms_consistent(
     else:
         model = stan_models[(target_name, transform_name, log_scale)]
 
-    result = model.sample(data=data, iter_sampling=100, sig_figs=14, seed=0)
+    result = model.sample(data=data, iter_sampling=100, sig_figs=18, seed=stan_seed)
     idata = az.convert_to_inference_data(result)
 
     if transform_name == "StanStickbreaking":

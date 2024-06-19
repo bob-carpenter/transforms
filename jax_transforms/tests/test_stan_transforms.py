@@ -155,7 +155,7 @@ def test_stan_and_jax_transforms_consistent(
     else:
         model = stan_models[(target_name, transform_name, log_scale)]
 
-    result = model.sample(data=data, iter_sampling=100, sig_figs=12)
+    result = model.sample(data=data, iter_sampling=100, sig_figs=14, seed=0)
     idata = az.convert_to_inference_data(result)
 
     if transform_name == "StanStickbreaking":

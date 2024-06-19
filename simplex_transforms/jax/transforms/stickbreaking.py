@@ -4,7 +4,7 @@ import jax
 import jax.numpy as jnp
 from tensorflow_probability.substrates.jax import distributions
 
-from .util import vmap_over_leading_axes
+from ..utils import vmap_over_leading_axes
 
 
 class StickbreakingBase:

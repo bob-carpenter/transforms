@@ -1,0 +1,1 @@
+recursive-include simplex_transforms/stan_code *.stan

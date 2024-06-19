@@ -1,0 +1,54 @@
+[project]
+name = "simplex_transforms"
+version = "0.1.0.dev0"
+description = "(un)constraining transforms for sampling on the simplex"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {file = "LICENSE.md"}
+keywords = ["simplex", "mcmc", "hmc", "jacobian", "bijection"]
+authors = [
+  {name = "Seth Axen", email = "seth@sethaxen.com" },
+]
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3 :: Only",
+]
+dependencies = []
+
+[project.optional-dependencies]
+jax = [
+  "jax",
+  "jaxlib",
+  "jaxtyping",
+  "tensorflow_probability",
+]
+workflow = [
+  "arviz",
+  "cmdstanpy",
+  "matplotlib",
+]
+test = [
+  "simplex_transforms[jax,workflow]",
+  "pytest",
+]
+
+[tool.setuptools.packages.find]
+include = ["simplex_transforms"]
+
+[tool.isort]
+profile = "black"
+skip_glob = ["utils/*"]
+
+[tool.ruff.format]
+exclude = ["utils/*"]
+
+[tool.ruff.lint]
+exclude = ["utils/*"]
+ignore = ["F722"]

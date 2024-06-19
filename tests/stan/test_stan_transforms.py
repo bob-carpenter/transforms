@@ -1,5 +1,4 @@
 import os
-from typing import NamedTuple
 
 import arviz as az
 import cmdstanpy
@@ -7,9 +6,10 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from tensorflow_probability.substrates.jax import distributions as tfd
 
-import jax_transforms
+import simplex_transforms.jax.targets as jax_targets
+import simplex_transforms.jax.transforms as jax_transforms
+import simplex_transforms.stan
 
 jax.config.update("jax_enable_x64", True)
 
@@ -33,24 +33,6 @@ project_dir = os.path.abspath(os.path.join(__file__, "..", "..", ".."))
 targets_dir = os.path.join(project_dir, "targets")
 transforms_dir = os.path.join(project_dir, "transforms")
 stan_models = {}
-
-
-class MultiLogitNormal(NamedTuple):
-    mu: jax.Array
-    L_Sigma: jax.Array
-
-    @property
-    def event_shape(self):
-        return (self.mu.shape[0] + 1,)
-
-    def log_prob(self, x):
-        transform = jax_transforms.ALR()
-        y = transform.unconstrain(x)
-        logJ = transform.constrain_with_logdetjac(y)[1]
-        lp_mvnorm = tfd.MultivariateNormalTriL(
-            loc=self.mu, scale_tril=self.L_Sigma
-        ).log_prob(y)
-        return lp_mvnorm - logJ
 
 
 def make_dirichlet_data(N: int, seed: int = 638):
@@ -85,10 +67,10 @@ def make_model_data(target: str, *args, **kwargs):
 
 def make_jax_distribution(target: str, params: dict):
     if target == "dirichlet":
-        return tfd.Dirichlet(jnp.array(params["alpha"]))
+        return jax_targets.Dirichlet(jnp.array(params["alpha"]))
     elif target == "multi-logit-normal":
-        return MultiLogitNormal(
-            mu=jnp.array(params["mu"]), L_Sigma=jnp.array(params["L_Sigma"])
+        return jax_targets.MultiLogitNormal(
+            jnp.array(params["mu"]), jnp.array(params["L_Sigma"])
         )
     else:
         raise ValueError(f"Unknown target {target}")
@@ -97,21 +79,12 @@ def make_jax_distribution(target: str, params: dict):
 def make_stan_model(
     model_file: str, target_name: str, transform_name: str, log_scale: bool
 ) -> cmdstanpy.CmdStanModel:
-    target_dir = os.path.join(targets_dir, target_name)
-    transform_dir = os.path.join(transforms_dir, transform_name)
-    space = "log_simplex" if log_scale else "simplex"
-    model_code = f"""
-    functions {{
-    #include {target_name}_functions.stan
-    #include {transform_name}_functions.stan
-    }}
-    #include {target_name}_data.stan
-    #include {transform_name}_parameters_{space}.stan
-    #include {target_name}_model_{space}.stan
-    """
+    model_code, include_paths = simplex_transforms.stan.make_stan_code(
+        target_name, transform_name, log_scale
+    )
     with open(model_file, "w") as f:
         f.write(model_code)
-    stanc_options = {"include-paths": ",".join([target_dir, transform_dir])}
+    stanc_options = {"include-paths": ",".join(include_paths)}
     model = cmdstanpy.CmdStanModel(stan_file=model_file, stanc_options=stanc_options)
     return model
 

@@ -3,7 +3,7 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 
-from .. import (
+from simplex_transforms.jax.transforms import (
     ALR,
     ILR,
     ExpandedSoftmax,
@@ -15,7 +15,7 @@ from .. import (
     StickbreakingPowerLogistic,
     StickbreakingPowerNormal,
 )
-from ..util import vmap_over_leading_axes
+from simplex_transforms.jax.utils import vmap_over_leading_axes
 
 jax.config.update("jax_enable_x64", True)
 
@@ -125,9 +125,9 @@ def test_normalized_transforms_consistent(N, seed=42):
 
 @pytest.mark.parametrize("N", [3, 5, 10])
 def test_ilr_semiorthogonal_matrix_properties(N):
-    import jax_transforms.ilr
+    from simplex_transforms.jax.transforms import ilr
 
-    V = jax_transforms.ilr._make_semiorthogonal_matrix(N)
+    V = ilr._make_semiorthogonal_matrix(N)
     assert V.shape == (N, N - 1)
     assert jnp.allclose(V.T @ V, jnp.eye(N - 1))
     assert jnp.allclose(V.T @ jnp.ones(N), 0)

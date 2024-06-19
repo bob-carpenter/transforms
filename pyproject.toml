@@ -34,7 +34,7 @@ workflow = [
   "cmdstanpy",
   "matplotlib",
 ]
-tests = [
+test = [
   "simplex_transforms[jax,workflow]",
   "pytest",
 ]

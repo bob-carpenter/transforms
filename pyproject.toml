@@ -44,6 +44,11 @@ include = ["simplex_transforms"]
 
 [tool.isort]
 profile = "black"
+skip_glob = ["utils/*"]
+
+[tool.ruff.format]
+exclude = ["utils/*"]
 
 [tool.ruff.lint]
+exclude = ["utils/*"]
 ignore = ["F722"]

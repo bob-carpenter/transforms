@@ -15,7 +15,8 @@ vector inv_ilr_simplex_constrain_lp(vector y, data matrix V) {
   vector[N] z = V * y;
   real r = log_sum_exp(z);
   vector[N] x = exp(z - r);
-  target += sum(z) - N * r + 0.5 * log(N);
+  target += z;
+  target += 0.5 * log(N) - N * r;
   return x;
 }
 
@@ -24,6 +25,6 @@ vector inv_ilr_log_simplex_constrain_lp(vector y, data matrix V) {
   vector[N] z = V * y;
   real r = log_sum_exp(z);
   vector[N] log_x = z - r;
-  target += log_x[N] + 0.5 * log(N);
+  target += 0.5 * log(N) + log_x[N];
   return log_x;
 }

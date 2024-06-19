@@ -2,7 +2,8 @@ vector expanded_softmax_simplex_constrain_lp(vector y) {
   int N = rows(y);
   real r = log_sum_exp(y);
   vector[N] x = exp(y - r);
-  target += sum(y) - N * r; // target += log(prod(x))
+  target += y;
+  target += -N * r;
   target += std_normal_lpdf(r - log(N));
   return x;
 }

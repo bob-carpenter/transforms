@@ -34,4 +34,4 @@ jobs:
           cmdstanpy.install_cmdstan(version="${{ env.CMDSTAN_VERSION }}")
         shell: python
       - name: Test with pytest
-        run: pytest
+        run: python -m pytest

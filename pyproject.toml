@@ -29,14 +29,14 @@ jax = [
   "jaxtyping",
   "tensorflow_probability",
 ]
-tests = [
+workflow = [
   "arviz",
   "cmdstanpy",
-  "jax",
-  "jaxlib",
-  "jaxtyping",
+  "matplotlib",
+]
+tests = [
+  "simplex_transforms[jax,workflow]",
   "pytest",
-  "tensorflow_probability",
 ]
 
 [tool.setuptools.packages.find]

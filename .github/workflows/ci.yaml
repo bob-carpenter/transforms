@@ -6,7 +6,7 @@ env:
   CMDSTAN_VERSION: "2.35.0"
 
 jobs:
-  jax_transforms:
+  tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:

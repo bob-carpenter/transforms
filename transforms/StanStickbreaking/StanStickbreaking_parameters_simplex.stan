@@ -1,0 +1,3 @@
+parameters {
+  simplex[N] x;
+}

@@ -1,0 +1,2 @@
+exclude = ["utils"]
+builtins = ["snakemake"]

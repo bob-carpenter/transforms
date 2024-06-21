@@ -11,6 +11,7 @@ wildcard_constraints:
 include: "rules/0_common.smk"
 include: "rules/1_generate_target_data.smk"
 include: "rules/2_compute_target_expectations.smk"
+include: "rules/3_build_stan_model.smk"
 # Rule all to define the end targets
 rule all:
     input:

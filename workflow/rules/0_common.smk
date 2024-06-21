@@ -29,3 +29,9 @@ else:
 targets = list(config["target_data"]["target_parameters"].keys())
 
 target_configs = make_target_configs(config["target_data"])
+
+sample_csv_files = expand(
+    "results/samples/{target}/{target_config}/{transform}_{space}_{chain_id}.csv",
+    chain_id=chain_ids,
+    allow_missing=True,
+)

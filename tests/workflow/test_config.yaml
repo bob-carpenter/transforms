@@ -14,3 +14,6 @@ target_data:
 target_expectations:
   num_draws: 1_000_000
   batch_size: 100_000
+
+sample:
+  chains: 4

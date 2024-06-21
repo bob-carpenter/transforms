@@ -19,3 +19,10 @@ target_expectations:
   num_draws: 100_000_000  # number of MC draws for estimated moments
   batch_size: 1_000_000     # number of online means/ses to compute in parallel
   seed: 1329546494
+
+# parameters passed to cmdstan
+sample:
+  seed: 699039259
+  chains: 100
+  iter_sampling: 1_000
+  sig_figs: 18

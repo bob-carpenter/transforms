@@ -14,3 +14,8 @@ target_data:
 
   decimals: 4  # how many digits after the decimal to keep in output file
 
+# parameters for computing target target_expectations
+target_expectations:
+  num_draws: 100_000_000  # number of MC draws for estimated moments
+  batch_size: 1_000_000     # number of online means/ses to compute in parallel
+  seed: 1329546494

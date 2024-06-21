@@ -10,3 +10,7 @@ target_data:
       N: [10]
       rho: [0.95]
       scale: [1]
+
+target_expectations:
+  num_draws: 1_000_000
+  batch_size: 100_000

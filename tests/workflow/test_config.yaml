@@ -1,0 +1,12 @@
+transforms: ['ALR', 'ExpandedSoftmax']
+
+target_data:
+  target_parameters:
+    dirichlet:
+      N: [10]
+      alpha: [1]
+
+    multi-logit-normal:
+      N: [10]
+      rho: [0.95]
+      scale: [1]

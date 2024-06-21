@@ -12,3 +12,6 @@ __pycache__
 
 build
 *.egg-info
+
+results
+.snakemake

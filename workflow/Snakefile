@@ -1,2 +1,15 @@
 configfile: "config/config.yaml"
 
+
+wildcard_constraints:
+    chain_id="[0-9]+",
+    space="simplex|log_simplex",
+    target="[a-z\-]+",
+    transform="[a-zA-Z]+",
+
+
+include: "rules/0_common.smk"
+include: "rules/1_generate_target_data.smk"
+# Rule all to define the end targets
+rule all:
+    input:

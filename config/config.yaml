@@ -1,1 +1,16 @@
+transforms: 'all'  # replace with list e.g. ['ALR', 'ILR'] to check just a few transforms
+
+# parameter combinations for the target distributions
+target_data:
+  target_parameters:
+    dirichlet:
+      N: [10, 100, 1000]                       # simplex vector length
+      alpha: [0.01, 1, 100, '1-100', '100-1']  # concentration ('a-b' is a range)
+
+    multi-logit-normal:
+      N: [10, 100]                  # simplex vector length
+      rho: [0.5, 0.95]              # base for a time-series covariance
+      scale: [1, '1-100', '100-1']  # diagonal multiplier for covariance ('a-b' is a range)
+
+  decimals: 4  # how many digits after the decimal to keep in output file
 

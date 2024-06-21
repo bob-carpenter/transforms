@@ -89,6 +89,16 @@ def make_stan_model(
     return model
 
 
+def test_get_target_names():
+    target_names = simplex_transforms.stan.get_target_names()
+    assert target_names == sorted(["dirichlet", "multi-logit-normal"])
+
+
+def test_get_transform_names():
+    transform_names = simplex_transforms.stan.get_transform_names()
+    assert transform_names == sorted(basic_transforms + expanded_transforms)
+
+
 @pytest.mark.parametrize("N", [3, 5])
 @pytest.mark.parametrize("log_scale", [False, True])
 @pytest.mark.parametrize("target_name", ["dirichlet", "multi-logit-normal"])

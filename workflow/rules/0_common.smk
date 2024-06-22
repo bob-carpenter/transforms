@@ -1,4 +1,5 @@
 import itertools
+import os
 
 import simplex_transforms
 import simplex_transforms.stan
@@ -13,8 +14,8 @@ def make_target_configs(config):
             for values in itertools.product(*params.values())
         ]
         for combination in param_combinations:
-            target_config = (
-                target + "/" + "_".join([f"{k}{v}" for k, v in combination.items()])
+            target_config = os.path.join(
+                target, "_".join([f"{k}{v}" for k, v in combination.items()])
             )
             target_configs[target_config] = (target, combination)
     return target_configs

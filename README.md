@@ -37,13 +37,13 @@ from simplex_transforms.jax.transforms import <transform>
 
 ## Analyses
 
-To reproduce all analyses, first install the package with
+To reproduce all analyses, first install the package in a conda environment named `simplex_transforms`
 ```bash
 pip install .[workflow]
 ```
 
 Then, from this directory, run
 ```bash
-snakemake --cores 'all'
+snakemake --cores all --use-conda
 ```
 Results will then be stored in `results`.

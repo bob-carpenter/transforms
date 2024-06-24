@@ -1,9 +1,6 @@
 configfile: "config/config.yaml"
 
 
-conda: config["conda-environment"]
-
-
 wildcard_constraints:
     chain_id="[0-9]+",
     space="simplex|log_simplex",

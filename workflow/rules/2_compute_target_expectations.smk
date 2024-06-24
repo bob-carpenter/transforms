@@ -7,5 +7,7 @@ rule compute_target_expectations:
         config=config["target_expectations"],
     output:
         "results/target_expectations/{target_config}.json",
+    conda:
+        config["conda-environment"]
     script:
         "../scripts/compute_target_expectations.py"

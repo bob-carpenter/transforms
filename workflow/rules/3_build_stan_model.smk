@@ -34,5 +34,7 @@ rule build_stan_model:
         space=lambda wildcards: wildcards.space,
     output:
         "results/models/{target}_{transform}_{space}.stan",
+    conda:
+        config["conda-environment"]
     script:
         "../scripts/build_stan_model.py"

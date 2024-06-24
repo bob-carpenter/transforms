@@ -8,5 +8,7 @@ rule sample:
         csv_dir="results/samples/{target}/{target_config}",
     output:
         sample_csv_files,
+    conda:
+        config["conda-environment"]
     script:
         "../scripts/sample.py"

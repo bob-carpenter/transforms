@@ -14,7 +14,7 @@ vector stickbreaking_normal_simplex_constrain_lp(vector y) {
   vector[N] log_cum_prod = append_row(0, cumulative_sum(log1m_exp(log_z)));
   vector[N] x = exp(append_row(log_z, 0) + log_cum_prod);
   target += std_normal_lpdf(w);
-  target += log_cum_prod[2 : N - 1];
+  target += sum(log_cum_prod[2 : N - 1]);
   return x;
 }
 

@@ -1,6 +1,7 @@
 import os
 
 import arviz as az
+import bridgestan
 import cmdstanpy
 import jax
 import jax.numpy as jnp
@@ -78,7 +79,7 @@ def make_jax_distribution(target: str, params: dict):
 
 def make_stan_model(
     model_file: str, target_name: str, transform_name: str, log_scale: bool
-) -> cmdstanpy.CmdStanModel:
+) -> tuple[cmdstanpy.CmdStanModel, list[str]]:
     model_code, include_paths = simplex_transforms.stan.make_stan_code(
         target_name, transform_name, log_scale
     )
@@ -86,7 +87,7 @@ def make_stan_model(
         f.write(model_code)
     stanc_options = {"include-paths": ",".join(include_paths)}
     model = cmdstanpy.CmdStanModel(stan_file=model_file, stanc_options=stanc_options)
-    return model
+    return model, include_paths
 
 
 @pytest.mark.parametrize("N", [3, 5])
@@ -118,16 +119,32 @@ def test_stan_and_jax_transforms_consistent(
     # get compiled model or compile and add to cache
     model_key = (target_name, transform_name, log_scale)
     if model_key not in stan_models:
-        model = make_stan_model(
-            os.path.join(
-                tmpdir,
-                f"{target_name}_{transform_name}_{'log_simplex' if log_scale else 'simplex'}.stan",
-            ),
+        stan_file = os.path.join(
+            tmpdir,
+            f"{target_name}_{transform_name}_{'log_simplex' if log_scale else 'simplex'}.stan",
+        )
+        model, include_paths = make_stan_model(
+            stan_file,
             target_name,
             transform_name,
             log_scale,
         )
         stan_models[model_key] = model
+
+        # check that we can compile the bridgestan model
+        stanc_args = ["--include-paths=" + ",".join(include_paths)]
+        stan_version = cmdstanpy.cmdstan_version()
+        if stan_version is None:
+            raise ValueError(
+                "Could not determine cmdstan version. It must be installed."
+            )
+        stan_version = ".".join([str(i) for i in stan_version])
+        make_args = [
+            "STAN_THREADS=true",
+            "BRIDGESTAN_AD_HESSIAN=true",
+            f"STANC3_VERSION={stan_version}",
+        ]
+        bridgestan.compile_model(stan_file, stanc_args=stanc_args, make_args=make_args)
     else:
         model = stan_models[(target_name, transform_name, log_scale)]
 

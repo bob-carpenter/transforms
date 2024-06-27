@@ -7,12 +7,8 @@ vector stickbricking_angular_simplex_constrain_lp(vector y) {
   vector[N - 1] log_c = log(cos(phi));
   vector[N] log_s2_prod = append_row(0, 2 * cumulative_sum(log_s));
   vector[N] x = exp(log_s2_prod + append_row(2 * log_c, 0));
-  target += (N - 1) * log2();
-  target += log1m_exp(log_u);
-  target += log_s2_prod[2 : N - 1];
-  target += log_c;
-  target += log_s;
-  target += log_phi;
+  target += (N - 1) * log2() + sum(log1m_exp(log_u)) + sum(log_s) + sum(log_phi);
+  target += sum(log_s2_prod[2 : N - 1]) + sum(log_c);
   return x;
 }
 
@@ -25,10 +21,7 @@ vector stickbricking_angular_log_simplex_constrain_lp(vector y) {
   vector[N - 1] log_c = log(cos(phi));
   vector[N] log_s2_prod = append_row(0, 2 * cumulative_sum(log_s));
   vector[N] log_x = log_s2_prod + append_row(2 * log_c, 0);
-  target += (N - 1) * log2();
-  target += log1m_exp(log_u);
+  target += (N - 1) * log2() + sum(log1m_exp(log_u)) + sum(log_s) + sum(log_phi);
   target += -sum(log_c);
-  target += log_s;
-  target += log_phi;
   return log_x;
 }

@@ -17,6 +17,6 @@ vector stickbreaking_power_logistic_log_simplex_constrain_lp(vector y) {
   // logistic_lpdf(y[i] | 0, 1)
   target += 2 * sum(log_u) - sum(y);
   target += -lgamma(N);
-  target += -log_x[1 : N - 1];
+  target += -sum(log_x[1 : N - 1]);
   return log_x;
 }

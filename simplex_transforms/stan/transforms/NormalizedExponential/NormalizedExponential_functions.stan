@@ -24,7 +24,7 @@ vector normalized_exponential_log_simplex_constrain_lp(vector y) {
   }
   real r = log_sum_exp(z);
   vector[N] log_x = z - r;
-  target += -log_x[1 : N - 1];
   target += std_normal_lpdf(y) - lgamma(N);
+  target += -sum(log_x[1 : N - 1]);
   return log_x;
 }

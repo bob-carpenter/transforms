@@ -3,7 +3,7 @@ name: CI
 on: [push]
 
 env:
-  CMDSTAN_VERSION: "2.35.0"
+  CMDSTAN_VERSION: "2.34.1"
 
 jobs:
   tests:

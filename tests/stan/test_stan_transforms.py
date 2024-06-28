@@ -1,3 +1,4 @@
+import json
 import os
 
 import arviz as az
@@ -151,3 +152,53 @@ def test_stan_and_jax_transforms_consistent(
     lp_expected += log_prob(x_expected)
     assert jnp.allclose(x_expected, idata.posterior.x.data, rtol=1e-4)
     assert jnp.allclose(lp_expected, idata.sample_stats.lp.data, rtol=1e-4)
+
+
+@pytest.mark.parametrize("N", [3, 5])
+@pytest.mark.parametrize("log_scale", [False, True])
+@pytest.mark.parametrize("transform_name", ["ALR", "ExpandedSoftmax"])
+def test_none_target(tmpdir, transform_name, N, log_scale, seed=638):
+    target_name = "none"
+    trans = getattr(jax_transforms, transform_name)()
+
+    data = {"N": N}
+    data_str = json.dumps(data)
+
+    # get compiled model or compile and add to cache
+    model_key = (target_name, transform_name, log_scale)
+    if model_key not in bridgestan_models:
+        stan_code, include_paths = simplex_transforms.stan.make_stan_code(
+            target_name,
+            transform_name,
+            log_scale,
+        )
+        # save Stan code to file
+        stan_file = os.path.join(
+            tmpdir,
+            f"{target_name}_{transform_name}_{'log_simplex' if log_scale else 'simplex'}.stan",
+        )
+        with open(stan_file, "w") as f:
+            f.write(stan_code)
+
+        # check that we can compile the bridgestan model
+        stanc_args = ["--include-paths=" + ",".join(include_paths)]
+        model_file = bridgestan.compile_model(
+            stan_file, stanc_args=stanc_args, make_args=bridgestan_make_args
+        )
+        bridgestan_models[model_key] = model_file
+    else:
+        model_file = bridgestan_models[model_key]
+    model = bridgestan.StanModel(model_file, data=data_str)
+
+    M = N - (transform_name in basic_transforms)
+
+    y = np.random.default_rng(seed).normal(size=(100, M))
+    x_expected, lp_expected = trans.constrain_with_logdetjac(y)
+    if transform_name in expanded_transforms:
+        r_expected, x_expected = x_expected
+        lp_expected += trans.default_prior(x_expected).log_prob(r_expected)
+
+    lp = np.apply_along_axis(
+        lambda y: model.log_density(y, propto=False, jacobian=True), -1, y
+    )
+    assert np.allclose(lp, lp_expected, rtol=1e-4)

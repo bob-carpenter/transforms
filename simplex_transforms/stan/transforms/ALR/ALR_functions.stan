@@ -2,8 +2,7 @@ vector inv_alr_simplex_constrain_lp(vector y) {
   int N = rows(y) + 1;
   real r = log1p_exp(log_sum_exp(y));
   vector[N] x = append_row(exp(y - r), exp(-r));
-  target += y;
-  target += -N * r;
+  target += sum(y) - N * r;
   return x;
 }
 

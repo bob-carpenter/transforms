@@ -1,6 +1,8 @@
+import json
 import os
 
 import arviz as az
+import bridgestan
 import cmdstanpy
 import jax
 import jax.numpy as jnp
@@ -33,6 +35,8 @@ project_dir = os.path.abspath(os.path.join(__file__, "..", "..", ".."))
 targets_dir = os.path.join(project_dir, "targets")
 transforms_dir = os.path.join(project_dir, "transforms")
 stan_models = {}
+bridgestan_models = {}
+bridgestan_make_args = ["STAN_THREADS=true", "BRIDGESTAN_AD_HESSIAN=true"]
 
 
 def make_dirichlet_data(N: int, seed: int = 638):
@@ -76,19 +80,6 @@ def make_jax_distribution(target: str, params: dict):
         raise ValueError(f"Unknown target {target}")
 
 
-def make_stan_model(
-    model_file: str, target_name: str, transform_name: str, log_scale: bool
-) -> cmdstanpy.CmdStanModel:
-    model_code, include_paths = simplex_transforms.stan.make_stan_code(
-        target_name, transform_name, log_scale
-    )
-    with open(model_file, "w") as f:
-        f.write(model_code)
-    stanc_options = {"include-paths": ",".join(include_paths)}
-    model = cmdstanpy.CmdStanModel(stan_file=model_file, stanc_options=stanc_options)
-    return model
-
-
 def test_get_target_names():
     target_names = simplex_transforms.stan.get_target_names()
     assert target_names == sorted(["dirichlet", "multi-logit-normal"])
@@ -117,10 +108,6 @@ def test_stan_and_jax_transforms_consistent(
     if target_name != "dirichlet" and transform_name not in ["ALR", "ILR"]:
         pytest.skip(f"No need to test {transform_name} with {target_name}. Skipping.")
 
-    constrain_with_logdetjac_vec = jax.vmap(
-        jax.vmap(trans.constrain_with_logdetjac, 0), 0
-    )
-
     data = make_model_data(target_name, N, seed=seed)
     dist = make_jax_distribution(target_name, data)
     log_prob = dist.log_prob
@@ -128,18 +115,29 @@ def test_stan_and_jax_transforms_consistent(
     # get compiled model or compile and add to cache
     model_key = (target_name, transform_name, log_scale)
     if model_key not in stan_models:
-        model = make_stan_model(
-            os.path.join(
-                tmpdir,
-                f"{target_name}_{transform_name}_{'log_simplex' if log_scale else 'simplex'}.stan",
-            ),
-            target_name,
-            transform_name,
-            log_scale,
+        stan_code, include_paths = simplex_transforms.stan.make_stan_code(
+            target_name, transform_name, log_scale
         )
+        # save Stan code to file
+        stan_file = os.path.join(
+            tmpdir,
+            f"{target_name}_{transform_name}_{'log_simplex' if log_scale else 'simplex'}.stan",
+        )
+        with open(stan_file, "w") as f:
+            f.write(stan_code)
+
+        # compile cmdstanpy model
+        stanc_options = {"include-paths": ",".join(include_paths)}
+        model = cmdstanpy.CmdStanModel(stan_file=stan_file, stanc_options=stanc_options)
         stan_models[model_key] = model
+
+        # check that we can compile the bridgestan model
+        stanc_args = ["--include-paths=" + ",".join(include_paths)]
+        bridgestan_models[model_key] = bridgestan.compile_model(
+            stan_file, stanc_args=stanc_args, make_args=bridgestan_make_args
+        )
     else:
-        model = stan_models[(target_name, transform_name, log_scale)]
+        model = stan_models[model_key]
 
     result = model.sample(data=data, iter_sampling=100, sig_figs=18, seed=stan_seed)
     idata = az.convert_to_inference_data(result)
@@ -148,10 +146,60 @@ def test_stan_and_jax_transforms_consistent(
         y = trans.unconstrain(idata.posterior.x.data)
     else:
         y = idata.posterior.y.data
-    x_expected, lp_expected = constrain_with_logdetjac_vec(y)
+    x_expected, lp_expected = trans.constrain_with_logdetjac(y)
     if transform_name in expanded_transforms:
         r_expected, x_expected = x_expected
         lp_expected += trans.default_prior(x_expected).log_prob(r_expected)
     lp_expected += log_prob(x_expected)
     assert jnp.allclose(x_expected, idata.posterior.x.data, rtol=1e-4)
     assert jnp.allclose(lp_expected, idata.sample_stats.lp.data, rtol=1e-4)
+
+
+@pytest.mark.parametrize("N", [3, 5])
+@pytest.mark.parametrize("log_scale", [False, True])
+@pytest.mark.parametrize("transform_name", ["ALR", "ExpandedSoftmax"])
+def test_none_target(tmpdir, transform_name, N, log_scale, seed=638):
+    target_name = "none"
+    trans = getattr(jax_transforms, transform_name)()
+
+    data = {"N": N}
+    data_str = json.dumps(data)
+
+    # get compiled model or compile and add to cache
+    model_key = (target_name, transform_name, log_scale)
+    if model_key not in bridgestan_models:
+        stan_code, include_paths = simplex_transforms.stan.make_stan_code(
+            target_name,
+            transform_name,
+            log_scale,
+        )
+        # save Stan code to file
+        stan_file = os.path.join(
+            tmpdir,
+            f"{target_name}_{transform_name}_{'log_simplex' if log_scale else 'simplex'}.stan",
+        )
+        with open(stan_file, "w") as f:
+            f.write(stan_code)
+
+        # check that we can compile the bridgestan model
+        stanc_args = ["--include-paths=" + ",".join(include_paths)]
+        model_file = bridgestan.compile_model(
+            stan_file, stanc_args=stanc_args, make_args=bridgestan_make_args
+        )
+        bridgestan_models[model_key] = model_file
+    else:
+        model_file = bridgestan_models[model_key]
+    model = bridgestan.StanModel(model_file, data=data_str)
+
+    M = N - (transform_name in basic_transforms)
+
+    y = np.random.default_rng(seed).normal(size=(100, M))
+    x_expected, lp_expected = trans.constrain_with_logdetjac(y)
+    if transform_name in expanded_transforms:
+        r_expected, x_expected = x_expected
+        lp_expected += trans.default_prior(x_expected).log_prob(r_expected)
+
+    lp = np.apply_along_axis(
+        lambda y: model.log_density(y, propto=False, jacobian=True), -1, y
+    )
+    assert np.allclose(lp, lp_expected, rtol=1e-4)

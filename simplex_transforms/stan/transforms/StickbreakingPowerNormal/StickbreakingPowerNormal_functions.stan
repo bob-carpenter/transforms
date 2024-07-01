@@ -23,6 +23,6 @@ vector stickbreaking_power_normal_log_simplex_constrain_lp(vector y) {
   vector[N] log_x = append_row(log1m_exp(log_w), 0) + append_row(0, cumulative_sum(log_w));
   target += std_normal_lpdf(y);
   target += -lgamma(N);
-  target += -log_x[1 : N - 1];
+  target += -sum(log_x[1 : N - 1]);
   return log_x;
 }

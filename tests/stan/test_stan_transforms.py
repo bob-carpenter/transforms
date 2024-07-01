@@ -82,7 +82,7 @@ def make_jax_distribution(target: str, params: dict):
 
 def test_get_target_names():
     target_names = simplex_transforms.stan.get_target_names()
-    assert target_names == sorted(["dirichlet", "multi-logit-normal"])
+    assert target_names == sorted(["dirichlet", "multi-logit-normal", "none"])
 
 
 def test_get_transform_names():

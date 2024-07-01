@@ -36,16 +36,7 @@ targets_dir = os.path.join(project_dir, "targets")
 transforms_dir = os.path.join(project_dir, "transforms")
 stan_models = {}
 bridgestan_models = {}
-
-stan_version = cmdstanpy.cmdstan_version()
-if stan_version is None:
-    raise ValueError("Could not determine cmdstan version. It must be installed.")
-stan_version = ".".join([str(i) for i in stan_version])
-bridgestan_make_args = [
-    "STAN_THREADS=true",
-    "BRIDGESTAN_AD_HESSIAN=true",
-    f"STANC3_VERSION={stan_version}",
-]
+bridgestan_make_args = ["STAN_THREADS=true", "BRIDGESTAN_AD_HESSIAN=true"]
 
 
 def make_dirichlet_data(N: int, seed: int = 638):

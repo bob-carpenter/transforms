@@ -29,3 +29,6 @@ sample:
   chains: 100
   iter_sampling: 1_000
   sig_figs: 18
+
+condition_numbers:
+  thin: 10

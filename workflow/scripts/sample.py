@@ -1,6 +1,7 @@
 import glob
 import os
 import re
+import shutil
 import tempfile
 
 import arviz as az
@@ -25,7 +26,7 @@ def sample(exe_file: str, data_file: str, csv_dir: str, **sample_kwargs) -> list
             else:
                 new_csv_basename = os.path.basename(csv_file)
             new_csv_file = os.path.join(csv_dir, new_csv_basename)
-            os.rename(csv_file, new_csv_file)
+            shutil.move(csv_file, new_csv_file)
             csv_files.append(new_csv_file)
     return csv_files
 

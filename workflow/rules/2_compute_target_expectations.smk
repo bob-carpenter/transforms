@@ -2,11 +2,9 @@ def mem_mb_for_target_expectations(wildcards) -> int:
     bytes_per_double = 8
     scale_factor = 10
     batch_size = 1_000_000
-    print(wildcards.target_config)
-    print(target_configs)
     N = target_configs[wildcards.target_config][1]["N"]
     num_bytes = bytes_per_double * batch_size * N * scale_factor
-    return num_bytes // 1_000_000
+    return max(2_000, num_bytes // 1_000_000)
 
 
 # Compute expectations wrt to parameterized target

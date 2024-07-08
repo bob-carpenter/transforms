@@ -30,7 +30,7 @@ def mem_mb_for_samples(wildcards) -> int:
     N = target_configs[target_config][1]["N"]
     scale_factor = 10
     num_bytes = bytes_per_double * num_chains * num_iters * N * scale_factor
-    return num_bytes // 1_000_000
+    return max(800, num_bytes // 1_000_000)
 
 
 chain_ids = range(1, config["sample"]["chains"] + 1)

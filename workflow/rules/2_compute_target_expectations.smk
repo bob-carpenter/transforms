@@ -7,6 +7,8 @@ rule compute_target_expectations:
         config=config["target_expectations"],
     output:
         "results/target_expectations/{target_config}.json",
+    resources:
+        mem_mb=2_000,
     conda:
         config["conda-environment"]
     script:

@@ -10,6 +10,9 @@ rule compute_condition_numbers:
         thin=config["condition_numbers"]["thin"],
     output:
         "results/condition_numbers/{target}/{target_config}/{transform}_{space}.nc",
+    resources:
+        mem_mb=2_000,
+        runtime=300,
     conda:
         config["conda-environment"]
     script:

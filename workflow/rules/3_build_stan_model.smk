@@ -9,6 +9,8 @@ rule build_stan_model:
         "results/models/{target}_{transform}_{space}.stan",
         "results/models/{target}_{transform}_{space}",  # compiled cmdstan model
         "results/models/{target}_{transform}_{space}_model.so",  # compiled bridgestan model
+    resources:
+        mem_mb=4_000,
     conda:
         config["conda-environment"]
     script:

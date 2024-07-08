@@ -3,10 +3,11 @@ import os
 import re
 import tempfile
 
+import arviz as az
 import cmdstanpy
 
 
-def sample(exe_file, data_file, csv_dir, **sample_kwargs):
+def sample(exe_file: str, data_file: str, csv_dir: str, **sample_kwargs) -> list[str]:
     model = cmdstanpy.CmdStanModel(exe_file=exe_file)
     fit = model.sample(data=data_file, save_warmup=True, time_fmt="", **sample_kwargs)
     # save CSVs to tempdir for renaming e.g. "{target}_{transform}-_{chain_id}.csv" to "{transform}_{chain_id}.csv", and then move to csv_dir
@@ -29,11 +30,33 @@ def sample(exe_file, data_file, csv_dir, **sample_kwargs):
     return csv_files
 
 
+def create_inference_data(csv_files: list[str]) -> az.InferenceData:
+    idata = az.from_cmdstan(csv_files, save_warmup=True)
+    if "sample_stats" not in idata:
+        raise ValueError("InferenceData does not contain sample_stats group")
+    if "warmup_sample_stats" in idata:
+        # save number of warm-up steps to sample_stats
+        idata["sample_stats"]["n_steps_warmup"] = idata["warmup_sample_stats"][
+            "n_steps"
+        ].sum("draw")
+    # remove warm-up draws and sample_stats from data
+    groups = {
+        group: idata[group]
+        for group in idata.groups()
+        if not group.startswith("warmup")
+    }
+    idata = az.InferenceData(**groups)
+    return idata
+
+
 smk = snakemake  # noqa: F821
 exe_file, data_file = smk.input
-csv_files = smk.output
+csv_files = smk.output[:-1]
+idata_file = smk.output[-1]
 csv_dir = smk.params["csv_dir"]
 sample_kwargs = smk.params.config
 
 csv_files_actual = sample(exe_file, data_file, csv_dir, **sample_kwargs)
 assert sorted(csv_files) == sorted(csv_files_actual)
+idata = create_inference_data(csv_files)
+idata.to_netcdf(idata_file)

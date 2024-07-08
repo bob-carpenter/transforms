@@ -23,11 +23,10 @@ rule all:
             target_config=target_configs.keys(),
         ),
         expand(
-            "results/samples/{target_config}/{transform}_{space}_{chain_id}.csv",
+            "results/samples/{target_config}/{transform}_{space}.nc",
             target_config=target_configs.keys(),
             transform=transforms,
             space=["simplex", "log_simplex"],
-            chain_id=chain_ids,
         ),
         expand(
             "results/condition_numbers/{target_config}/{transform}_{space}.nc",

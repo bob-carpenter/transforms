@@ -7,7 +7,10 @@ rule sample:
         config=config["sample"],
         csv_dir="results/samples/{target}/{target_config}",
     output:
-        sample_csv_files,
+        [
+            *sample_csv_files,
+            "results/samples/{target}/{target_config}/{transform}_{space}.nc",
+        ],
     conda:
         config["conda-environment"]
     script:

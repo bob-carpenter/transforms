@@ -22,6 +22,17 @@ def make_target_configs(config):
             target_configs[target_config] = (target, combination)
 
 
+def mem_mb_for_samples(wildcards) -> int:
+    bytes_per_double = 8
+    num_chains = config["sample"]["chains"]
+    num_iters = config["sample"]["iter_sampling"]
+    target_config = f"{wildcards.target}/{wildcards.target_config}"
+    N = target_configs[target_config][1]["N"]
+    scale_factor = 10
+    num_bytes = bytes_per_double * num_chains * num_iters * N * scale_factor
+    return num_bytes // 1_000_000
+
+
 chain_ids = range(1, config["sample"]["chains"] + 1)
 
 if config["transforms"] == "all":

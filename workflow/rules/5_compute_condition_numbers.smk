@@ -11,7 +11,7 @@ rule compute_condition_numbers:
     output:
         "results/condition_numbers/{target}/{target_config}/{transform}_{space}.nc",
     resources:
-        mem_mb=2_000,
+        mem_mb=mem_mb_for_samples,
         runtime=300,
     conda:
         config["conda-environment"]

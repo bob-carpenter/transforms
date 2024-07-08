@@ -1,5 +1,5 @@
 def mem_mb_for_target_expectations(wildcards) -> int:
-    bytes_per_double = 8
+    bytes_per_double = 64
     scale_factor = 10
     batch_size = 1_000_000
     N = target_configs[wildcards.target_config][1]["N"]

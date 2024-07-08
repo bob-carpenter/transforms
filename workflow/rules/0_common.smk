@@ -23,7 +23,7 @@ def make_target_configs(config):
 
 
 def mem_mb_for_samples(wildcards) -> int:
-    bytes_per_double = 8
+    bytes_per_double = 64
     num_chains = config["sample"]["chains"]
     num_iters = config["sample"]["iter_sampling"]
     target_config = f"{wildcards.target}/{wildcards.target_config}"

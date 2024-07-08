@@ -13,7 +13,7 @@ include: "rules/1_generate_target_data.smk"
 include: "rules/2_compute_target_expectations.smk"
 include: "rules/3_build_stan_model.smk"
 include: "rules/4_sample.smk"
-
+include: "rules/5_compute_condition_numbers.smk"
 
 # Rule all to define the end targets
 rule all:
@@ -29,3 +29,9 @@ rule all:
             space=["simplex", "log_simplex"],
             chain_id=chain_ids,
         ),
+        expand(
+            "results/condition_numbers/{target_config}/{transform}_{space}.nc",
+            target_config=target_configs.keys(),
+            transform=transforms,
+            space=["simplex", "log_simplex"],
+        )

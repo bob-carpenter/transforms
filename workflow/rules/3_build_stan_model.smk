@@ -8,6 +8,7 @@ rule build_stan_model:
     output:
         "results/models/{target}_{transform}_{space}.stan",
         "results/models/{target}_{transform}_{space}",  # compiled cmdstan model
+        "results/models/{target}_{transform}_{space}_model.so",  # compiled bridgestan model
     conda:
         config["conda-environment"]
     script:

@@ -12,7 +12,7 @@ rule compute_condition_numbers:
         "results/condition_numbers/{target}/{target_config}/{transform}_{space}.nc",
     resources:
         mem_mb=mem_mb_for_samples,
-        runtime=300,
+        runtime=600,
     conda:
         config["conda-environment"]
     script:

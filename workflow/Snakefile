@@ -32,5 +32,5 @@ rule all:
             "results/condition_numbers/{target_config}/{transform}_{space}.nc",
             target_config=target_configs.keys(),
             transform=transforms,
-        )
             space=spaces,
+        ),

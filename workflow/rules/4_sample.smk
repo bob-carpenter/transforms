@@ -5,7 +5,7 @@ rule sample:
         "results/target_data/{target}/{target_config}.json",
     params:
         config=config["sample"],
-        csv_dir="results/samples/{target}/{target_config}",
+        csv_dir="results/samples/{target}/{target_config}/{transform}_{space}",
     output:
         "results/samples/{target}/{target_config}/{transform}_{space}.nc",
     resources:

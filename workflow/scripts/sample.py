@@ -2,7 +2,6 @@ import glob
 import os
 import re
 import shutil
-import tempfile
 
 import arviz as az
 import cmdstanpy
@@ -10,24 +9,19 @@ import cmdstanpy
 
 def sample(exe_file: str, data_file: str, csv_dir: str, **sample_kwargs) -> list[str]:
     model = cmdstanpy.CmdStanModel(exe_file=exe_file)
-    fit = model.sample(data=data_file, save_warmup=True, time_fmt="", **sample_kwargs)
+    model.sample(
+        data=data_file, save_warmup=True, output_dir=csv_dir, **sample_kwargs
+    )
+
     # save CSVs to tempdir for renaming e.g. "{target}_{transform}-_{chain_id}.csv" to "{transform}_{chain_id}.csv", and then move to csv_dir
     csv_files = {}
-    with tempfile.TemporaryDirectory() as tmpdir:
-        fit.save_csvfiles(dir=tmpdir)
-        csv_files_tmp = glob.glob(os.path.join(tmpdir, "*.csv"))
-        for csv_file in csv_files_tmp:
-            match = re.match(
-                r"^[A-Za-z\-]+_(.+)-_(\d+).csv", os.path.basename(csv_file)
-            )
-            if match:
-                transform_name, chain_id = match.groups()
-                new_csv_basename = f"{transform_name}_{chain_id}.csv"
-            else:
-                raise ValueError(f"Could not parse chain ID from {csv_file}")
-            new_csv_file = os.path.join(csv_dir, new_csv_basename)
-            shutil.move(csv_file, new_csv_file)
-            csv_files[int(chain_id)] = new_csv_file
+    for csv_file in glob.glob(os.path.join(csv_dir, "*.csv")):
+        match = re.match(r"^.*_(\d+).csv", os.path.basename(csv_file))
+        if match:
+            chain_id = match.groups()[0]
+        else:
+            raise ValueError(f"Could not parse chain ID from {csv_file}")
+        csv_files[int(chain_id)] = csv_file
     return [csv_files[k] for k in sorted(csv_files.keys())]
 
 
@@ -56,6 +50,7 @@ idata_file = smk.output[0]
 csv_dir = smk.params["csv_dir"]
 sample_kwargs = smk.params.config
 
+shutil.rmtree(csv_dir, ignore_errors=True)
 csv_files = sample(exe_file, data_file, csv_dir, **sample_kwargs)
 idata = create_inference_data(csv_files)
 idata.to_netcdf(idata_file)

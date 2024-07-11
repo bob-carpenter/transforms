@@ -1,6 +1,8 @@
 # name of environment where dependencies are installed
 conda-environment: "simplex_transforms"
 
+spaces: ['simplex', 'log_simplex']
+
 transforms: 'all'  # replace with list e.g. ['ALR', 'ILR'] to check just a few transforms
 
 # parameter combinations for the target distributions

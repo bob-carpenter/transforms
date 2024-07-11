@@ -40,6 +40,7 @@ if config["transforms"] == "all":
 else:
     transforms = config["transforms"]
 targets = list(config["target_data"]["target_parameters"].keys())
+spaces = config["spaces"]
 
 make_target_configs(config["target_data"])
 

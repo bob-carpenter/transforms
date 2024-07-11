@@ -7,10 +7,7 @@ rule sample:
         config=config["sample"],
         csv_dir="results/samples/{target}/{target_config}",
     output:
-        [
-            *sample_csv_files,
-            "results/samples/{target}/{target_config}/{transform}_{space}.nc",
-        ],
+        "results/samples/{target}/{target_config}/{transform}_{space}.nc",
     resources:
         cpus_per_task=8,
         mem_mb=mem_mb_for_samples,

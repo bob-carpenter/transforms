@@ -12,7 +12,7 @@ def sample(exe_file: str, data_file: str, csv_dir: str, **sample_kwargs) -> list
     model = cmdstanpy.CmdStanModel(exe_file=exe_file)
     fit = model.sample(data=data_file, save_warmup=True, time_fmt="", **sample_kwargs)
     # save CSVs to tempdir for renaming e.g. "{target}_{transform}-_{chain_id}.csv" to "{transform}_{chain_id}.csv", and then move to csv_dir
-    csv_files = []
+    csv_files = {}
     with tempfile.TemporaryDirectory() as tmpdir:
         fit.save_csvfiles(dir=tmpdir)
         csv_files_tmp = glob.glob(os.path.join(tmpdir, "*.csv"))
@@ -27,8 +27,8 @@ def sample(exe_file: str, data_file: str, csv_dir: str, **sample_kwargs) -> list
                 new_csv_basename = os.path.basename(csv_file)
             new_csv_file = os.path.join(csv_dir, new_csv_basename)
             shutil.move(csv_file, new_csv_file)
-            csv_files.append(new_csv_file)
-    return csv_files
+            csv_files[int(chain_id)] = new_csv_file
+    return [csv_files[k] for k in sorted(csv_files.keys())]
 
 
 def create_inference_data(csv_files: list[str]) -> az.InferenceData:
@@ -52,12 +52,10 @@ def create_inference_data(csv_files: list[str]) -> az.InferenceData:
 
 smk = snakemake  # noqa: F821
 exe_file, data_file = smk.input
-csv_files = smk.output[:-1]
-idata_file = smk.output[-1]
+idata_file = smk.output[0]
 csv_dir = smk.params["csv_dir"]
 sample_kwargs = smk.params.config
 
-csv_files_actual = sample(exe_file, data_file, csv_dir, **sample_kwargs)
-assert sorted(csv_files) == sorted(csv_files_actual)
+csv_files = sample(exe_file, data_file, csv_dir, **sample_kwargs)
 idata = create_inference_data(csv_files)
 idata.to_netcdf(idata_file)

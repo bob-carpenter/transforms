@@ -34,7 +34,7 @@ expanded_transforms = [
 project_dir = os.path.abspath(os.path.join(__file__, "..", "..", ".."))
 targets_dir = os.path.join(project_dir, "targets")
 transforms_dir = os.path.join(project_dir, "transforms")
-stan_models = {}
+cmdstanpy_models = {}
 bridgestan_models = {}
 bridgestan_make_args = ["STAN_THREADS=true", "BRIDGESTAN_AD_HESSIAN=true"]
 
@@ -80,6 +80,53 @@ def make_jax_distribution(target: str, params: dict):
         raise ValueError(f"Unknown target {target}")
 
 
+def write_stan_file(tmpdir, target_name, transform_name, log_scale):
+    stan_code, include_paths = simplex_transforms.stan.make_stan_code(
+        target_name,
+        transform_name,
+        log_scale,
+    )
+    stan_file = os.path.join(
+        tmpdir,
+        f"{target_name}_{transform_name}_{'log_simplex' if log_scale else 'simplex'}.stan",
+    )
+    with open(stan_file, "w") as f:
+        f.write(stan_code)
+    return stan_file, include_paths
+
+
+def get_bridgestan_model_file(tmpdir, target_name, transform_name, log_scale):
+    global bridgestan_models
+    model_key = (target_name, transform_name, log_scale)
+    if model_key not in bridgestan_models:
+        stan_file, include_paths = write_stan_file(
+            tmpdir, target_name, transform_name, log_scale
+        )
+        stanc_args = ["--include-paths=" + ",".join(include_paths)]
+        model_file = bridgestan.compile_model(
+            stan_file, stanc_args=stanc_args, make_args=bridgestan_make_args
+        )
+        bridgestan_models[model_key] = model_file
+    else:
+        model_file = bridgestan_models[model_key]
+    return model_file
+
+
+def get_cmdstanpy_model(tmpdir, target_name, transform_name, log_scale):
+    global cmdstanpy_models
+    model_key = (target_name, transform_name, log_scale)
+    if model_key not in cmdstanpy_models:
+        stan_file, include_paths = write_stan_file(
+            tmpdir, target_name, transform_name, log_scale
+        )
+        stanc_options = {"include-paths": ",".join(include_paths)}
+        model = cmdstanpy.CmdStanModel(stan_file=stan_file, stanc_options=stanc_options)
+        cmdstanpy_models[model_key] = model
+    else:
+        model = cmdstanpy_models[model_key]
+    return model
+
+
 def test_get_target_names():
     target_names = simplex_transforms.stan.get_target_names()
     assert target_names == sorted(["dirichlet", "multi-logit-normal", "none"])
@@ -112,32 +159,11 @@ def test_stan_and_jax_transforms_consistent(
     dist = make_jax_distribution(target_name, data)
     log_prob = dist.log_prob
 
+    # check that we can compile the bridgestan model
+    get_bridgestan_model_file(tmpdir, target_name, transform_name, log_scale)
+
     # get compiled model or compile and add to cache
-    model_key = (target_name, transform_name, log_scale)
-    if model_key not in stan_models:
-        stan_code, include_paths = simplex_transforms.stan.make_stan_code(
-            target_name, transform_name, log_scale
-        )
-        # save Stan code to file
-        stan_file = os.path.join(
-            tmpdir,
-            f"{target_name}_{transform_name}_{'log_simplex' if log_scale else 'simplex'}.stan",
-        )
-        with open(stan_file, "w") as f:
-            f.write(stan_code)
-
-        # compile cmdstanpy model
-        stanc_options = {"include-paths": ",".join(include_paths)}
-        model = cmdstanpy.CmdStanModel(stan_file=stan_file, stanc_options=stanc_options)
-        stan_models[model_key] = model
-
-        # check that we can compile the bridgestan model
-        stanc_args = ["--include-paths=" + ",".join(include_paths)]
-        bridgestan_models[model_key] = bridgestan.compile_model(
-            stan_file, stanc_args=stanc_args, make_args=bridgestan_make_args
-        )
-    else:
-        model = stan_models[model_key]
+    model = get_cmdstanpy_model(tmpdir, target_name, transform_name, log_scale)
 
     result = model.sample(data=data, iter_sampling=100, sig_figs=18, seed=stan_seed)
     idata = az.convert_to_inference_data(result)
@@ -159,36 +185,12 @@ def test_stan_and_jax_transforms_consistent(
 @pytest.mark.parametrize("log_scale", [False, True])
 @pytest.mark.parametrize("transform_name", ["ALR", "ExpandedSoftmax"])
 def test_none_target(tmpdir, transform_name, N, log_scale, seed=638):
-    target_name = "none"
     trans = getattr(jax_transforms, transform_name)()
 
     data = {"N": N}
     data_str = json.dumps(data)
 
-    # get compiled model or compile and add to cache
-    model_key = (target_name, transform_name, log_scale)
-    if model_key not in bridgestan_models:
-        stan_code, include_paths = simplex_transforms.stan.make_stan_code(
-            target_name,
-            transform_name,
-            log_scale,
-        )
-        # save Stan code to file
-        stan_file = os.path.join(
-            tmpdir,
-            f"{target_name}_{transform_name}_{'log_simplex' if log_scale else 'simplex'}.stan",
-        )
-        with open(stan_file, "w") as f:
-            f.write(stan_code)
-
-        # check that we can compile the bridgestan model
-        stanc_args = ["--include-paths=" + ",".join(include_paths)]
-        model_file = bridgestan.compile_model(
-            stan_file, stanc_args=stanc_args, make_args=bridgestan_make_args
-        )
-        bridgestan_models[model_key] = model_file
-    else:
-        model_file = bridgestan_models[model_key]
+    model_file = get_bridgestan_model_file(tmpdir, "none", transform_name, log_scale)
     model = bridgestan.StanModel(model_file, data=data_str)
 
     M = N - (transform_name in basic_transforms)

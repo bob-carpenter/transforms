@@ -24,7 +24,7 @@ def sample(exe_file: str, data_file: str, csv_dir: str, **sample_kwargs) -> list
                 transform_name, chain_id = match.groups()
                 new_csv_basename = f"{transform_name}_{chain_id}.csv"
             else:
-                new_csv_basename = os.path.basename(csv_file)
+                raise ValueError(f"Could not parse chain ID from {csv_file}")
             new_csv_file = os.path.join(csv_dir, new_csv_basename)
             shutil.move(csv_file, new_csv_file)
             csv_files[int(chain_id)] = new_csv_file

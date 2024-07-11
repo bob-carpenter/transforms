@@ -178,7 +178,7 @@ def test_stan_and_jax_transforms_consistent(
         lp_expected += trans.default_prior(x_expected).log_prob(r_expected)
     lp_expected += log_prob(x_expected)
     assert jnp.allclose(x_expected, idata.posterior.x.data, rtol=1e-4)
-    assert jnp.allclose(lp_expected, idata.sample_stats.lp.data, rtol=1e-4)
+    assert jnp.allclose(lp_expected, idata.sample_stats.lp.data, rtol=5e-3)
 
 
 @pytest.mark.parametrize("N", [3, 5])

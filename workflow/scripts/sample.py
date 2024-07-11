@@ -2,6 +2,8 @@ import glob
 import os
 import re
 import shutil
+import traceback
+import warnings
 
 import arviz as az
 import cmdstanpy
@@ -9,9 +11,13 @@ import cmdstanpy
 
 def sample(exe_file: str, data_file: str, csv_dir: str, **sample_kwargs) -> list[str]:
     model = cmdstanpy.CmdStanModel(exe_file=exe_file)
-    model.sample(
-        data=data_file, save_warmup=True, output_dir=csv_dir, **sample_kwargs
-    )
+    try:
+        model.sample(
+            data=data_file, save_warmup=True, output_dir=csv_dir, **sample_kwargs
+        )
+    except Exception:
+        warnings.warn("Failed to sample model. Traceback:\n" + traceback.format_exc())
+        return []
 
     # save CSVs to tempdir for renaming e.g. "{target}_{transform}-_{chain_id}.csv" to "{transform}_{chain_id}.csv", and then move to csv_dir
     csv_files = {}
@@ -26,6 +32,8 @@ def sample(exe_file: str, data_file: str, csv_dir: str, **sample_kwargs) -> list
 
 
 def create_inference_data(csv_files: list[str]) -> az.InferenceData:
+    if len(csv_files) == 0:
+        return az.InferenceData()
     idata = az.from_cmdstan(csv_files, save_warmup=True)
     if "sample_stats" not in idata:
         raise ValueError("InferenceData does not contain sample_stats group")

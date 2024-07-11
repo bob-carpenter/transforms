@@ -205,3 +205,52 @@ def test_none_target(tmpdir, transform_name, N, log_scale, seed=638):
         lambda y: model.log_density(y, propto=False, jacobian=True), -1, y
     )
     assert np.allclose(lp, lp_expected, rtol=1e-4)
+
+
+@pytest.mark.parametrize("N", [5, 10, 100, 1_000])
+@pytest.mark.parametrize("log_scale", [False, True])
+def test_stan_stickbreaking_consistency(tmpdir, N, log_scale, seed=234):
+    data = {"N": N}
+    data_str = json.dumps(data)
+
+    model_ref = bridgestan.StanModel(
+        get_bridgestan_model_file(tmpdir, "none", "StanStickbreaking", log_scale),
+        data=data_str,
+    )
+    model = bridgestan.StanModel(
+        get_bridgestan_model_file(tmpdir, "none", "StickbreakingLogistic", log_scale),
+        data=data_str,
+    )
+
+    y = np.random.default_rng(seed).uniform(-2, 2, size=(100, N - 1))
+
+    # get log-density and x or log_x from StickbreakingLogistic
+    param_prefix = "log_x." if log_scale else "x."
+    lp = np.apply_along_axis(
+        lambda y: model.log_density(y, propto=False, jacobian=True), -1, y
+    )
+    param_names = model.param_names(include_tp=True)
+    param_inds = np.array(
+        [i for i, name in enumerate(param_names) if name.startswith(param_prefix)]
+    )
+    assert len(param_inds) == N
+    params = np.apply_along_axis(
+        lambda y: model.param_constrain(y, include_tp=True)[param_inds], -1, y
+    )
+
+    # get log-density and x or log_x from StanStickbreaking
+    lp_ref = np.apply_along_axis(
+        lambda y: model_ref.log_density(y, propto=False, jacobian=True), -1, y
+    )
+    param_names = model_ref.param_names(include_tp=True)
+    param_inds = np.array(
+        [i for i, name in enumerate(param_names) if name.startswith(param_prefix)]
+    )
+    assert len(param_inds) == N
+    params_ref = np.apply_along_axis(
+        lambda y: model_ref.param_constrain(y, include_tp=True)[param_inds], -1, y
+    )
+
+    # check that the log-densities and parameters are consistent
+    assert np.allclose(lp, lp_ref, rtol=1e-6)
+    assert np.allclose(params, params_ref, rtol=1e-6)

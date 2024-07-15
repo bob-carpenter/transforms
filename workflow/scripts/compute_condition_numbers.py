@@ -4,7 +4,7 @@ import numpy as np
 import xarray as xr
 
 
-def hessian_cond(y: np.ndarray) -> float:
+def hessian_cond(model: bridgestan.StanModel, y: np.ndarray) -> float:
     H = np.asanyarray(model.log_density_hessian(y)[2])
     try:
         return np.linalg.cond(H)
@@ -37,7 +37,10 @@ if len(idata.groups()) > 0:
     y_thinned = y.sel(draw=range(0, len(y.draw), thin))
 
     cond = xr.apply_ufunc(
-        hessian_cond, y_thinned, input_core_dims=[["y_dim_0"]], vectorize=True
+        lambda y: hessian_cond(model, y),
+        y_thinned,
+        input_core_dims=[["y_dim_0"]],
+        vectorize=True,
     )
     cond.name = "condition_number"
 else:

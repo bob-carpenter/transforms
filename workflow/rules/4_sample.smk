@@ -11,7 +11,7 @@ rule sample:
     resources:
         cpus_per_task=8,
         mem_mb=mem_mb_for_samples,
-        runtime=300,
+        runtime=600,
     conda:
         config["conda-environment"]
     script:

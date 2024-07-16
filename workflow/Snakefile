@@ -31,6 +31,6 @@ rule all:
         expand(
             "results/condition_numbers/{target_config}/{transform}_{space}.nc",
             target_config=target_configs.keys(),
-            transform=transforms,
+            transform=[t for t in transforms if t != "ILR"],
             space=spaces,
         ),

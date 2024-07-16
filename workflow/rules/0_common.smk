@@ -43,3 +43,9 @@ targets = list(config["target_data"]["target_parameters"].keys())
 spaces = config["spaces"]
 
 make_target_configs(config["target_data"])
+summary_csv_files = expand(
+    "results/summaries/{target_config}/{transform}_{space}.csv",
+    target_config=target_configs.keys(),
+    transform=transforms,
+    space=spaces,
+)

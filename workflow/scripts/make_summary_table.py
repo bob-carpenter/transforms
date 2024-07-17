@@ -40,6 +40,8 @@ def summarize_estimate(ds: xr.Dataset) -> pd.DataFrame:
 
 
 def make_summary_table(idata: az.InferenceData) -> pd.DataFrame:
+    if len(idata.groups()) == 0:
+        return pd.DataFrame()
     estimates = ["x_mean", "x2_mean", "entropy"]
     dfs = []
     for estimate in estimates:
@@ -55,8 +57,9 @@ netcdf_file = smk.input[0]
 csv_file = smk.output[0]
 idata = az.from_netcdf(netcdf_file)
 summary_df = make_summary_table(idata)
-summary_df.insert(0, "target", smk.wildcards.target)
-summary_df.insert(1, "target_config", smk.wildcards.target_config)
-summary_df.insert(2, "transform", smk.wildcards.transform)
-summary_df.insert(3, "log_scale", smk.params.log_scale)
+if len(summary_df) > 0:
+    summary_df.insert(0, "target", smk.wildcards.target)
+    summary_df.insert(1, "target_config", smk.wildcards.target_config)
+    summary_df.insert(2, "transform", smk.wildcards.transform)
+    summary_df.insert(3, "log_scale", smk.params.log_scale)
 summary_df.to_csv(csv_file, index=False)

@@ -7,6 +7,8 @@ rule summarize:
         "results/target_data/{target}/{target_config}.json",
     output:
         "results/summaries/{target}/{target_config}/{transform}_{space}.nc",
+    resources:
+        mem_mb=mem_mb_for_samples,
     conda:
         config["conda-environment"]
     script:

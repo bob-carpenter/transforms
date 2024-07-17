@@ -1,9 +1,13 @@
 def mem_mb_for_target_expectations(wildcards) -> int:
     bytes_per_double = 64
     scale_factor = 10
-    batch_size = 1_000_000
-    N = target_configs[wildcards.target_config][1]["N"]
-    num_bytes = bytes_per_double * batch_size * N * scale_factor
+    batch_size = config["target_expectations"]["batch_size"]
+    target, params = target_configs[wildcards.target_config]
+    N = params["N"]
+    if target == "dirichlet":
+        num_bytes = bytes_per_double * N * scale_factor
+    else:
+        num_bytes = bytes_per_double * batch_size * N * scale_factor
     return max(2_000, num_bytes // 1_000_000)
 
 

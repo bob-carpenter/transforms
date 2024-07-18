@@ -3,12 +3,13 @@ import pandas as pd
 import xarray as xr
 
 
-def summarize_estimate(ds: xr.Dataset) -> pd.DataFrame:
+def summarize_estimate(ds: xr.Dataset, sampling_stats) -> pd.DataFrame:
     param_dims = [dim for dim in ds.dims if dim not in ["chain", "draw"]]
     # per-chain stats (1 chain per row)
     max_abs_rel_error = ds["abs_rel_error"].max(dim=param_dims)
     min_ess_per_chain = ds["ess_per_chain"].min(dim=param_dims)
-    min_rel_ess_per_chain = ds["rel_ess_per_chain"].min(dim=param_dims)
+    n_steps_total = sampling_stats["n_steps"] + sampling_stats["n_steps_warmup"]
+    min_rel_ess_per_chain = (ds["ess_per_chain"] / n_steps_total).min(dim=param_dims)
     ds_per_chain = xr.Dataset(
         dict(
             max_abs_rel_error=max_abs_rel_error,
@@ -20,7 +21,9 @@ def summarize_estimate(ds: xr.Dataset) -> pd.DataFrame:
     df_per_chain["chain"] += 1
     # whole estimate stats (1 row)
     min_ess_bulk = ds["ess_bulk"].min(dim=param_dims)
-    min_rel_ess_bulk = ds["rel_ess_bulk"].min(dim=param_dims)
+    min_rel_ess_bulk = (ds["ess_bulk"] / n_steps_total.sum(dim="chain")).min(
+        dim=param_dims
+    )
     max_rhat = ds["rhat"].max(dim=param_dims)
     df_whole_estimate = pd.DataFrame(
         dict(
@@ -42,11 +45,18 @@ def summarize_estimate(ds: xr.Dataset) -> pd.DataFrame:
 def make_summary_table(idata: az.InferenceData) -> pd.DataFrame:
     if len(idata.groups()) == 0:
         return pd.DataFrame()
+    sampling_stats = az.convert_to_dataset(idata, group="sampling_stats")
     estimates = ["x_mean", "x2_mean", "entropy"]
     dfs = []
     for estimate in estimates:
         ds = getattr(idata, f"{estimate}_stats")
-        df = summarize_estimate(ds)
+        df = summarize_estimate(ds, sampling_stats)
+        # join df and sampling_stats.to_dataframe() on chain column
+        df = df.merge(
+            sampling_stats.to_dataframe().reset_index(),
+            on="chain",
+            how="left",
+        )
         df.insert(0, "estimate", estimate)
         dfs.append(df)
     return pd.concat(dfs, ignore_index=True)

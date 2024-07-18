@@ -42,7 +42,7 @@ def compute_sample_summaries(sample_stats: xr.Dataset) -> xr.Dataset:
     )
     n_steps = sample_stats.n_steps.sum(dim="draw")
     n_steps_warmup = sample_stats.n_steps_warmup
-    bfmi = az.bfmi(sample_stats)
+    bfmi = xr.DataArray(az.bfmi(sample_stats), coords=dict(chain=sample_stats.chain))
     return xr.Dataset(
         dict(
             n_draws=n_draws,

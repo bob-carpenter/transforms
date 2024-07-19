@@ -45,6 +45,24 @@ def _allclose(x, y, **kwargs):
         return jnp.allclose(x, y, **kwargs)
 
 
+def _make_helmert_matrix(N: int):
+    H1 = jnp.full(N, 1 / jnp.sqrt(N))
+    H22 = jnp.tril(jnp.ones((N - 1, N - 1)))
+    ns = jnp.arange(1, N)
+    H22 = H22.at[jnp.diag_indices_from(H22)].set(-ns) / jnp.sqrt(ns * (ns + 1)).reshape(
+        -1, 1
+    )
+    H21 = H22[:, :1].at[0].multiply(-1)
+    H = jnp.block([[H1], [H21, H22]])
+    return H
+
+
+def _make_ilr_semiorthogonal_matrix(N: int):
+    H = _make_helmert_matrix(N)
+    V = H.T[:, 1:]
+    return V
+
+
 def logdetjac(f):
     jac = jax.jacobian(f)
 
@@ -124,10 +142,14 @@ def test_normalized_transforms_consistent(N, seed=42):
 
 
 @pytest.mark.parametrize("N", [3, 5, 10])
-def test_ilr_semiorthogonal_matrix_properties(N):
+def test_ilr_semiorthogonal_matrix_properties(N, seed=87):
     from simplex_transforms.jax.transforms import ilr
 
-    V = ilr._make_semiorthogonal_matrix(N)
+    V = _make_ilr_semiorthogonal_matrix(N)
     assert V.shape == (N, N - 1)
     assert jnp.allclose(V.T @ V, jnp.eye(N - 1))
     assert jnp.allclose(V.T @ jnp.ones(N), 0)
+    y = jax.random.normal(key=jax.random.key(seed), shape=(N - 1,))
+    z = V @ y
+    assert jnp.allclose(ilr._get_V_mul_y(y), z)
+    assert jnp.allclose(ilr._get_V_trans_mul_z(z), y)

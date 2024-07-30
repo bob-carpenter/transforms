@@ -1,4 +1,5 @@
 import arviz as az
+import numpy as np
 import pandas as pd
 import xarray as xr
 
@@ -8,6 +9,7 @@ def summarize_estimate(ds: xr.Dataset, sampling_stats) -> pd.DataFrame:
     # per-chain stats (1 chain per row)
     max_abs_rel_error = ds["abs_rel_error"].max(dim=param_dims)
     min_ess_per_chain = ds["ess_per_chain"].min(dim=param_dims)
+    rmsre = np.sqrt((ds["abs_rel_error"] ** 2).mean(dim=param_dims))
     n_steps_total = sampling_stats["n_steps"] + sampling_stats["n_steps_warmup"]
     min_rel_ess_per_chain = (ds["ess_per_chain"] / n_steps_total).min(dim=param_dims)
     ds_per_chain = xr.Dataset(
@@ -15,6 +17,7 @@ def summarize_estimate(ds: xr.Dataset, sampling_stats) -> pd.DataFrame:
             max_abs_rel_error=max_abs_rel_error,
             min_ess_per_chain=min_ess_per_chain,
             min_rel_ess_per_chain=min_rel_ess_per_chain,
+            rmsre=rmsre,
         )
     )
     df_per_chain = ds_per_chain.to_dataframe().reset_index()

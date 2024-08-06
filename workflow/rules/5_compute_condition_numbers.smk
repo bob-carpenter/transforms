@@ -17,3 +17,19 @@ rule compute_condition_numbers:
         config["conda-environment"]
     script:
         "../scripts/compute_condition_numbers.py"
+
+
+rule make_condition_numbers_table:
+    input:
+        expand(
+            "results/condition_numbers/{target_config}/{transform}_{space}.nc",
+            target_config=target_configs.keys(),
+            transform=transforms,
+            space=spaces,
+        ),
+    output:
+        "results/condition_numbers/all.csv",
+    conda:
+        config["conda-environment"]
+    script:
+        "../scripts/make_condition_numbers_table.py"

@@ -20,16 +20,5 @@ include: "rules/6_summarize.smk"
 # Rule all to define the end targets
 rule all:
     input:
-        expand(
-            "results/condition_numbers/{target_config}/{transform}_{space}.nc",
-            target_config=target_configs.keys(),
-            transform=transforms,
-            space=spaces,
-        ),
-        summary_csv_files,
-        expand(
-            "results/summaries/all.csv",
-            target_config=target_configs.keys(),
-            transform=transforms,
-            space=spaces,
-        ),
+        "results/condition_numbers/all.csv",
+        "results/summaries/all.csv",

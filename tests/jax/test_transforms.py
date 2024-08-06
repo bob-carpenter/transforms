@@ -7,6 +7,7 @@ from simplex_transforms.jax.transforms import (
     ALR,
     ILR,
     ExpandedSoftmax,
+    ILRReflector,
     NormalizedExponential,
     NormalizedGamma,
     StickbreakingAngular,
@@ -22,6 +23,7 @@ jax.config.update("jax_enable_x64", True)
 basic_transforms = [
     ALR,
     ILR,
+    ILRReflector,
     StickbreakingAngular,
     StickbreakingLogistic,
     StickbreakingNormal,

@@ -1,0 +1,19 @@
+transforms: ['ALR', 'ExpandedSoftmax']
+
+target_data:
+  target_parameters:
+    dirichlet:
+      N: [10]
+      alpha: [1]
+
+    multi-logit-normal:
+      N: [10]
+      rho: [0.95]
+      scale: [1]
+
+target_expectations:
+  num_draws: 1_000_000
+  batch_size: 100_000
+
+sample:
+  chains: 4

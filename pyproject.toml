@@ -30,10 +30,14 @@ jax = [
   "tensorflow_probability",
 ]
 workflow = [
+  "simplex_transforms[jax]",
   "arviz",
   "bridgestan",
   "cmdstanpy",
   "matplotlib",
+  "numpy",
+  "pandas",
+  "snakemake",
 ]
 test = [
   "simplex_transforms[jax,workflow]",

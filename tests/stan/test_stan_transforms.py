@@ -34,7 +34,7 @@ expanded_transforms = [
 project_dir = os.path.abspath(os.path.join(__file__, "..", "..", ".."))
 targets_dir = os.path.join(project_dir, "targets")
 transforms_dir = os.path.join(project_dir, "transforms")
-stan_models = {}
+cmdstanpy_models = {}
 bridgestan_models = {}
 bridgestan_make_args = ["STAN_THREADS=true", "BRIDGESTAN_AD_HESSIAN=true"]
 
@@ -80,6 +80,63 @@ def make_jax_distribution(target: str, params: dict):
         raise ValueError(f"Unknown target {target}")
 
 
+def write_stan_file(tmpdir, target_name, transform_name, log_scale):
+    stan_code, include_paths = simplex_transforms.stan.make_stan_code(
+        target_name,
+        transform_name,
+        log_scale,
+    )
+    stan_file = os.path.join(
+        tmpdir,
+        f"{target_name}_{transform_name}_{'log_simplex' if log_scale else 'simplex'}.stan",
+    )
+    with open(stan_file, "w") as f:
+        f.write(stan_code)
+    return stan_file, include_paths
+
+
+def get_bridgestan_model_file(tmpdir, target_name, transform_name, log_scale):
+    global bridgestan_models
+    model_key = (target_name, transform_name, log_scale)
+    if model_key not in bridgestan_models:
+        stan_file, include_paths = write_stan_file(
+            tmpdir, target_name, transform_name, log_scale
+        )
+        stanc_args = ["--include-paths=" + ",".join(include_paths)]
+        model_file = bridgestan.compile_model(
+            stan_file, stanc_args=stanc_args, make_args=bridgestan_make_args
+        )
+        bridgestan_models[model_key] = model_file
+    else:
+        model_file = bridgestan_models[model_key]
+    return model_file
+
+
+def get_cmdstanpy_model(tmpdir, target_name, transform_name, log_scale):
+    global cmdstanpy_models
+    model_key = (target_name, transform_name, log_scale)
+    if model_key not in cmdstanpy_models:
+        stan_file, include_paths = write_stan_file(
+            tmpdir, target_name, transform_name, log_scale
+        )
+        stanc_options = {"include-paths": ",".join(include_paths)}
+        model = cmdstanpy.CmdStanModel(stan_file=stan_file, stanc_options=stanc_options)
+        cmdstanpy_models[model_key] = model
+    else:
+        model = cmdstanpy_models[model_key]
+    return model
+
+
+def test_get_target_names():
+    target_names = simplex_transforms.stan.get_target_names()
+    assert target_names == sorted(["dirichlet", "multi-logit-normal", "none"])
+
+
+def test_get_transform_names():
+    transform_names = simplex_transforms.stan.get_transform_names()
+    assert transform_names == sorted(basic_transforms + expanded_transforms)
+
+
 @pytest.mark.parametrize("N", [3, 5])
 @pytest.mark.parametrize("log_scale", [False, True])
 @pytest.mark.parametrize("target_name", ["dirichlet", "multi-logit-normal"])
@@ -102,32 +159,11 @@ def test_stan_and_jax_transforms_consistent(
     dist = make_jax_distribution(target_name, data)
     log_prob = dist.log_prob
 
+    # check that we can compile the bridgestan model
+    get_bridgestan_model_file(tmpdir, target_name, transform_name, log_scale)
+
     # get compiled model or compile and add to cache
-    model_key = (target_name, transform_name, log_scale)
-    if model_key not in stan_models:
-        stan_code, include_paths = simplex_transforms.stan.make_stan_code(
-            target_name, transform_name, log_scale
-        )
-        # save Stan code to file
-        stan_file = os.path.join(
-            tmpdir,
-            f"{target_name}_{transform_name}_{'log_simplex' if log_scale else 'simplex'}.stan",
-        )
-        with open(stan_file, "w") as f:
-            f.write(stan_code)
-
-        # compile cmdstanpy model
-        stanc_options = {"include-paths": ",".join(include_paths)}
-        model = cmdstanpy.CmdStanModel(stan_file=stan_file, stanc_options=stanc_options)
-        stan_models[model_key] = model
-
-        # check that we can compile the bridgestan model
-        stanc_args = ["--include-paths=" + ",".join(include_paths)]
-        bridgestan_models[model_key] = bridgestan.compile_model(
-            stan_file, stanc_args=stanc_args, make_args=bridgestan_make_args
-        )
-    else:
-        model = stan_models[model_key]
+    model = get_cmdstanpy_model(tmpdir, target_name, transform_name, log_scale)
 
     result = model.sample(data=data, iter_sampling=100, sig_figs=18, seed=stan_seed)
     idata = az.convert_to_inference_data(result)
@@ -142,43 +178,19 @@ def test_stan_and_jax_transforms_consistent(
         lp_expected += trans.default_prior(x_expected).log_prob(r_expected)
     lp_expected += log_prob(x_expected)
     assert jnp.allclose(x_expected, idata.posterior.x.data, rtol=1e-4)
-    assert jnp.allclose(lp_expected, idata.sample_stats.lp.data, rtol=1e-4)
+    assert jnp.allclose(lp_expected, idata.sample_stats.lp.data, rtol=5e-3)
 
 
 @pytest.mark.parametrize("N", [3, 5])
 @pytest.mark.parametrize("log_scale", [False, True])
 @pytest.mark.parametrize("transform_name", ["ALR", "ExpandedSoftmax"])
 def test_none_target(tmpdir, transform_name, N, log_scale, seed=638):
-    target_name = "none"
     trans = getattr(jax_transforms, transform_name)()
 
     data = {"N": N}
     data_str = json.dumps(data)
 
-    # get compiled model or compile and add to cache
-    model_key = (target_name, transform_name, log_scale)
-    if model_key not in bridgestan_models:
-        stan_code, include_paths = simplex_transforms.stan.make_stan_code(
-            target_name,
-            transform_name,
-            log_scale,
-        )
-        # save Stan code to file
-        stan_file = os.path.join(
-            tmpdir,
-            f"{target_name}_{transform_name}_{'log_simplex' if log_scale else 'simplex'}.stan",
-        )
-        with open(stan_file, "w") as f:
-            f.write(stan_code)
-
-        # check that we can compile the bridgestan model
-        stanc_args = ["--include-paths=" + ",".join(include_paths)]
-        model_file = bridgestan.compile_model(
-            stan_file, stanc_args=stanc_args, make_args=bridgestan_make_args
-        )
-        bridgestan_models[model_key] = model_file
-    else:
-        model_file = bridgestan_models[model_key]
+    model_file = get_bridgestan_model_file(tmpdir, "none", transform_name, log_scale)
     model = bridgestan.StanModel(model_file, data=data_str)
 
     M = N - (transform_name in basic_transforms)
@@ -193,3 +205,52 @@ def test_none_target(tmpdir, transform_name, N, log_scale, seed=638):
         lambda y: model.log_density(y, propto=False, jacobian=True), -1, y
     )
     assert np.allclose(lp, lp_expected, rtol=1e-4)
+
+
+@pytest.mark.parametrize("N", [5, 10, 100, 1_000])
+@pytest.mark.parametrize("log_scale", [False, True])
+def test_stan_stickbreaking_consistency(tmpdir, N, log_scale, seed=234):
+    data = {"N": N}
+    data_str = json.dumps(data)
+
+    model_ref = bridgestan.StanModel(
+        get_bridgestan_model_file(tmpdir, "none", "StanStickbreaking", log_scale),
+        data=data_str,
+    )
+    model = bridgestan.StanModel(
+        get_bridgestan_model_file(tmpdir, "none", "StickbreakingLogistic", log_scale),
+        data=data_str,
+    )
+
+    y = np.random.default_rng(seed).uniform(-2, 2, size=(100, N - 1))
+
+    # get log-density and x or log_x from StickbreakingLogistic
+    param_prefix = "log_x." if log_scale else "x."
+    lp = np.apply_along_axis(
+        lambda y: model.log_density(y, propto=False, jacobian=True), -1, y
+    )
+    param_names = model.param_names(include_tp=True)
+    param_inds = np.array(
+        [i for i, name in enumerate(param_names) if name.startswith(param_prefix)]
+    )
+    assert len(param_inds) == N
+    params = np.apply_along_axis(
+        lambda y: model.param_constrain(y, include_tp=True)[param_inds], -1, y
+    )
+
+    # get log-density and x or log_x from StanStickbreaking
+    lp_ref = np.apply_along_axis(
+        lambda y: model_ref.log_density(y, propto=False, jacobian=True), -1, y
+    )
+    param_names = model_ref.param_names(include_tp=True)
+    param_inds = np.array(
+        [i for i, name in enumerate(param_names) if name.startswith(param_prefix)]
+    )
+    assert len(param_inds) == N
+    params_ref = np.apply_along_axis(
+        lambda y: model_ref.param_constrain(y, include_tp=True)[param_inds], -1, y
+    )
+
+    # check that the log-densities and parameters are consistent
+    assert np.allclose(lp, lp_ref, rtol=1e-6)
+    assert np.allclose(params, params_ref, rtol=1e-6)

@@ -12,6 +12,40 @@ def _include_or_read(file_path: str, use_include: bool) -> str:
         return open(file_path).read()
 
 
+def get_target_names() -> list[str]:
+    """Get the names of all target distributions.
+
+    Returns
+    -------
+    list[str]
+        List of target distribution names.
+    """
+    return sorted(
+        [
+            name
+            for name in os.listdir(_TARGETS_DIR)
+            if os.path.isdir(os.path.join(_TARGETS_DIR, name))
+        ]
+    )
+
+
+def get_transform_names() -> list[str]:
+    """Get the names of all transforms.
+
+    Returns
+    -------
+    list[str]
+        List of transform names.
+    """
+    return sorted(
+        [
+            name
+            for name in os.listdir(_TRANSFORMS_DIR)
+            if os.path.isdir(os.path.join(_TRANSFORMS_DIR, name))
+        ]
+    )
+
+
 def make_stan_code(
     target_name: str,
     transform_name: str,

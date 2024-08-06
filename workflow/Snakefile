@@ -1,0 +1,24 @@
+configfile: "config/config.yaml"
+
+
+wildcard_constraints:
+    chain_id="[0-9]+",
+    space="simplex|log_simplex",
+    target="[a-z\-]+",
+    transform="[a-zA-Z]+",
+
+
+include: "rules/0_common.smk"
+include: "rules/1_generate_target_data.smk"
+include: "rules/2_compute_target_expectations.smk"
+include: "rules/3_build_stan_model.smk"
+include: "rules/4_sample.smk"
+include: "rules/5_compute_condition_numbers.smk"
+include: "rules/6_summarize.smk"
+
+
+# Rule all to define the end targets
+rule all:
+    input:
+        "results/condition_numbers/all.csv",
+        "results/summaries/all.csv",
